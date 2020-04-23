@@ -1,0 +1,70 @@
+#查询今日
+select * from 表名 where TO_DAYS(NOW()) - TO_DAYS(create_date) = 0
+#查询n天前的数据(超过n天)
+select * from 表名 where TO_DAYS(NOW()) - TO_DAYS(create_date) > n
+#查询n天内的数据(不超过n天)
+select * from 表名 where TO_DAYS(NOW()) - TO_DAYS(create_date) < n
+#查询本月
+select * from 表名 where DATE_FORMAT(create_date,'%Y%m') - DATE_FORMAT(CURDATE(),'%Y%m') = 0
+
+
+跨库查询:
+(1) 项目中实现跨库查询：
+    ①通过其他项目的feign来调用对应接口进行查询。
+    ②通过配置多数据源实现。
+(2) 数据库中实现跨库查询：
+    可以直接通过一条SQL语句实现，例如：在数据库A下新建查询，但是要关联查询出数据库B中的数据，那么：
+        select a.字段1,b.字段2 from 表A left join `数据库名`.表B on 连接条件 where 查询条件;
+
+
+distinct关键字：
+    通常只用来查询不重复记录的条数，而不是所有不重复记录。其原因是distinct关键字只能返回它的【目标字段】，而无法返回其它字段。
+    示例：
+    select distinct class from A;查询class字段所有不同的值。
+    select distinct class , name from A;实际上是根据class + name进行去重，只有这两个字段的值都相同才会被过滤掉。
+    select count(distinct class) from A;统计class字段所有不同的值的出现次数。
+    select class , distinct name from A;TODO 会提示错误，因为distinct必须放在开头
+
+
+Exists关键字：
+    示例：
+	select * from student s where Exists(select * from class c where c.id = s.c_id)
+	说明：
+    #先执行外查询
+    #将外查询结果集中的数据记录逐一输入到exists子句中执行
+    #如果能够查到数据，则Exists()的结果为true，将外查询的这条结果输出。
+    #如果不能查到数据，则Exists()的结果为false，将外查询的这条结果废弃。
+
+
+group by关键字：
+    示例：select c_id as "班级编号",class.name as "班级名称",count(*) as "班级人数" from student left join class on class.id = student.c_id group by c_id;
+          班级编号  班级名称  班级人数
+          1		    二年一班  2
+          2	        二年二班  1
+    说明：根据指定字段对查询到的结果集(from表 & where条件)进行分组，默认只取每组第一条数据作为查询结果，所以查询到的数据意义不大，一般和聚合函数一起使用。
+    TODO 特别注意!!!：在group by中使用count(*)获取条数，获取的是各个分组的条数，而不是结果集中的总条数。而count(*)单独使用时获取到的是结果集中的总条数。
+
+having关键字：
+    示例：select c_id as "班级编号",class.name as "班级名称",count(*) as "班级人数" from student left join class on class.id = student.c_id group by c_id  having class.name ="二年一班";
+          班级编号  班级名称  班级人数
+          1		    二年一班  2
+    说明：对group by分组后得到的结果集再次进行过滤的到的结果。
+    参考：TODO MySQL查询语句的执行顺序：https://www.cnblogs.com/knowledgesea/p/4177830.html
+          from --> where --> group by --> having --> order by --> limit --> select
+          每一步都对应一张虚拟表
+
+
+and & or关键字：
+   结果集中的数据记录必须同时满足and关键字连接的两个运算，and连接的两个运算可以在外面加上括号并且看做一个整体的运算
+   结果集中的数据记录只需要满足任意一个or关键字连接的两个运算
+   括号括起来的看做一个整体的运算
+
+   示例：
+        select * from employee where sex = '男' and name = '张三' or name = '李四';  ==  select * from employee where (sex = '男' and name = '张三') or name = '李四';
+        查询出所有姓名为张三的男性或者姓名为李四的男性/女性
+
+        select * from employee where sex = '男' and (name = '张三' or name = '李四');
+        查询出所有姓名为张三的男性或者姓名为李四的男性，可以看做 (' sex = '男' ' and 'name = '张三' ') or (' sex = '男' ' and 'name = '李四' ')
+
+修改字段注释：
+        ALTER TABLE `数据库名`.`表名` MODIFY COLUMN `字段名` 字段类型(长度) NOT NULL COMMENT '字段注释';

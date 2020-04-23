@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wgx.study.project.common.mapper.UserMapper">
+
+    <!--<cache/>-->
+
+    <select id="getUser" resultType="User">
+        select * from user where user.id = 1;
+    </select>
+
+    <insert id="insertUser" useGeneratedKeys="true">
+        insert into user(
+        user_name
+        )
+        values(
+        #{user.userName}
+        )
+    </insert>
+
+    <select id="testIf" resultType="com.wgx.study.project.common.pojo.User">
+        select * from user where 1=1
+        <if test=" user.userName != null and user.userName != '' ">
+            and user_name = #{user.userName}
+        </if>
+    </select>
+
+    <select id="testChoose" resultType="com.wgx.study.project.common.pojo.User">
+        select * from user where 1=1
+        <choose>
+            <when test=" user.userSex = 2">
+                and user_sex = 2
+            </when>
+            <when test=" user.userSex = 1">
+                and user_sex = 1
+            </when>
+            <otherwise>
+
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="testWhere" resultType="com.wgx.study.project.common.pojo.User">
+        select * from user
+        <where>
+            <if test=" user.userName != null and user.userName != '' ">
+                and user_name = #{user.userName}
+            </if>
+            <if test=" user.userSex != null and user.userSex != '' ">
+                and user_sex = #{user.userSex}
+            </if>
+        </where>
+    </select>
+
+    <update id="testSet">
+        update user
+        <set>
+            <if test=" user.userSex != null and user.userSex != '' ">
+                user_sex = #{user.userSex},
+            </if>
+            <if test=" user.userAge != null and user.userAge != '' ">
+                user_age = #{user.userAge},
+            </if>
+        </set>
+        where user_name = #{user.userName}
+    </update>
+
+    <select id="testForEach" resultType="com.wgx.study.project.common.pojo.User">
+        select * from user where user_age in
+        <foreach collection="userAgeList" item="userAgeItem" open="(" close=")" separator=",">
+            #{userAgeItem}
+        </foreach>
+    </select>
+
+    <resultMap id="resultMap1" type="com.wgx.study.project.common.pojo.UserResultMap1" autoMapping="true">
+        <!--TODO 开启字段和属性的自动映射，结果集中的字段被映射为同名属性，每一个id属性对应一个<association>。结果集中返回的的其他字段通过<association/>标签会被映射为User对象的属性-->
+        <!--外层对象属性封装，开启autoMapping自动映射-->
+        <!--TODO 注意点1：所有id主键必须手动映射。 注意点2：必须开启所有autoMapping = true-->
+        <!--<id column="id" property="id"/>-->
+        <!--association：一对一关联对象属性-->
+        <association property="user" javaType="com.wgx.study.project.common.pojo.User" autoMapping="true">
+            <!--内层对象属性封装，开启autoMapping自动映射-->
+            <!--<id column="user_id" property="id"></id>-->
+        </association>
+    </resultMap>
+
+    <select id="testResultMap1" resultMap="resultMap1">
+        select * from user where id = 1;
+    </select>
+
+    <resultMap id="resultMap2" type="com.wgx.study.project.common.pojo.UserResultMap2" autoMapping="true">
+        <!--外层对象属性封装，开启autoMapping自动映射-->
+        <!--TODO 指定主键id属性，决定了返回对象的数量，如果这里指定的id字段为"id"，那么结果集中有多少列不同的id就会封装出多少个UserResultMap2对象，封装逻辑是从外到内封装，先封装出两个外层，再将其他字段的数据继续向内进行映射-->
+        <!--TODO 例如查询到的结果集如下所示，id只有两个值：1和2，mybatis将这些数据记录按照id分为两组，每一个id属性对应一个<collection/>。每组中的每条数据记录都会被映射为User对象再通过<collection/>标签映射到UserResultMap2的userList属性对应的集合中-->
+        <!--
+                                id    id1
+UserResultMap2   ——》 {         1	   1	 Wed Dec 11 17:42:19 AWST 2019	1	1	1	1	1	1
+                        {         1	   212	 Wed Dec 11 17:44:42 AWST 2019	1	1	1	1	1	212
+                        {         1	   213	 Wed Dec 11 17:59:32 AWST 2019	1	1	1	1	1	213
+                        {         1	   214	 Mon Dec 16 16:59:13 AWST 2019	1	1	1	1	1	214
+                        {         1	   215	 Mon Dec 16 16:59:14 AWST 2019	1	1	1	1	1	215
+                        {         1	   216	 Mon Dec 16 16:59:15 AWST 2019	1	1	1	1	1	216
+                        {         1	   217	 Mon Dec 16 16:59:16 AWST 2019	1	1	1	1	1	217
+                        {         1	   218	 Mon Dec 16 16:59:17 AWST 2019	1	1	1	1	1	218
+                        {         1	   219	 Mon Dec 16 16:59:18 AWST 2019	1	1	1	1	1	219
+                        {         1	   220	 Mon Dec 16 16:59:19 AWST 2019	1	1	1	1	1	220
+                        {         1	   221	 Mon Dec 16 16:59:20 AWST 2019	1	1	1	1	1	221
+                        {         1	   222	 Mon Dec 16 16:59:21 AWST 2019	1	1	1	1	1	222
+                        {         1	   223	 Mon Dec 16 16:59:22 AWST 2019	1	1	1	1	1	223
+UserResultMap2   ——》 {         2	   224	 Mon Dec 16 16:59:23 AWST 2019	1	1	1	1	2	224
+                        {         2	   225	 Mon Dec 16 16:59:24 AWST 2019	1	1	1	1	2	225
+                        {         2	   226	 Mon Dec 16 16:59:25 AWST 2019	1	1	1	1	2	226
+                        {         2	   227	 Mon Dec 16 16:59:26 AWST 2019	1	1	1	1	2	227
+                        {         2	   228	 Mon Dec 16 16:59:27 AWST 2019	1	1	1	1	2	228
+                        {         2	   229	 Mon Dec 16 16:59:28 AWST 2019	1	1	1	1	2	229
+                        {         2	   230	 Mon Dec 16 16:59:29 AWST 2019	1	1	1	1	2	230
+                        {         2	   231	 Mon Dec 16 16:59:30 AWST 2019	1	1	1	1	2	231
+                        {         2	   232	 Mon Dec 16 16:59:31 AWST 2019	1	1	1	1	2	232
+                        {         2	   233	 Mon Dec 16 16:59:32 AWST 2019	1	1	1	1	2	233
+                        {         2	   234	 Mon Dec 16 16:59:33 AWST 2019	1	1	1	1	2	234
+                        {         2	   235	 Mon Dec 16 16:59:34 AWST 2019	1	1	1	1	2	235
+
+
+        -->
+        <id column="id" property="id"/>
+        <!--collection：一对多关联对象集合属性-->
+        <collection property="userList" javaType="java.util.List" ofType="com.wgx.study.project.common.pojo.User" autoMapping="true">
+            <!--内层对象属性封装，开启autoMapping自动映射-->
+            <id column="uid" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="testResultMap2" resultMap="resultMap2">
+        select *,u.id as uid from user_result_map2 m left join user u  on u.rid = m.id
+        /*select * from user*/
+    </select>
+
+
+    <!--resultMap标签-->
+    <!--
+        主要解决了两大问题：
+            (1)数据表字段名与实体类属性名不一致(也不满足驼峰匹配)，无法完成结果集的自动映射，需要起别名才能完成映射。
+            (2)复杂的关联查询，结果集无法直接完成映射。
+    -->
+    <!--<resultMap id="userResultMap" type="com.example.demo.common.pojo.User" autoMapping="true">
+        <id column="id" property="id"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_sex" property="userSex"/>
+        <result column="user_age" property="userAge"/>
+        <association property="father" javaType="com.example.demo.common.pojo.User" autoMapping="true"/>
+        <collection property="sons" javaType="java.util.List" autoMapping="true"/>
+    </resultMap>
+
+    <select id="testResultMap" resultMap="userResultMap">
+        select * from user where id = 1
+    </select>-->
+
+</mapper>

@@ -1,0 +1,7 @@
+动态SQL：
+(1)<if>标签：用来判断。
+(2)<choose>标签/<when>标签/<otherwise>标签：用来选择。
+(3)<where>标签/<set>标签/<trim>标签：用来去除。
+    <where>用于去除开头的and或or，<set>用于去除结尾的逗号，常用于update语句。<trim>则两者都可以实现。
+    注意：<where>标签和<set>标签具备自动隐藏的特性，即只有当标签体内有内容时才会变成where或set关键字，否则就隐藏。
+(4)<foreach>标签：用于遍历。常用于in关键字。

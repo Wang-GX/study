@@ -1,0 +1,15 @@
+
+集合、数组--->Stream
+Stream<T> stream = list.stream();
+Stream--->集合、数组
+List<T> collect = stream.collect(Collectors.toList());
+
+终结方法(无返回值)：
+forEach(Consumer c)：遍历流中数据，Consumer是一个消费型函数式接口。参数为该接口的实现类对象，可以使用lambda表达式(下同)。
+count()：统计流中元素个数
+延迟方法(返回值为Stream类型流对象)
+filter(Predicate p)：过滤流中数据，Predicate是一个判断型函数式接口。
+map(Function f)：转换流中数据，Function是一个功能型函数式接口。
+limit(Long n)：截取流中数据，只取前n个。
+skip(Long n)：跳过流中数据，跳过前n个。
+concat(Stream s1,Stream s2)：合并两个流

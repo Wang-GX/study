@@ -1,0 +1,3 @@
+在controller层入参出添加@Valid注解，原理是aop
+如果校验失败，请求不会进入controller，返回错误码为3000，message为实体类中指定的信息
+TODO !今天完成

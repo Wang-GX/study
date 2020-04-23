@@ -1,0 +1,5 @@
+https://www.cnblogs.com/sunsing123/p/10304184.html
+
+打开Redis目录下redis.windows.conf中第887行notify-keyspace-events Ex前面的注释
+
+详细配置：https://redis.io/topics/notifications

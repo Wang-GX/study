@@ -1,0 +1,98 @@
+TODO 搭建私服并配置本地Maven连接到私服并实现依赖的下载和上传
+
+(1) maven项目目录结构
+/src/main/java/ ：存放java源文件
+/src/main/resources ：存放框架或其他工具的配置文件
+/src/main/webapp ：web资源如css、js、html、jsp等
+/src/test/java ：存放java测试代码
+/target ：文件编译过程中生成的.class文件，jar，war等
+/pom.xml：Maven工程的核心配置文件(支持继承)
+
+(2) 关于POM文件：
+在我们项目顶层的POM文件中，我们会看到dependencyManagement元素。通过它元素来管理jar包的版本(只定义版本号而不引用依赖)，让子项目中引用一个依赖而不用显示的列出版本号。
+Maven会沿着父子层次向上走，直到找到一个拥有dependencyManagement元素的项目，然后它就会使用在这个dependencyManagement元素中指定的版本号。
+<dependencyManagement>和<dependencies>的区别：
+dependencies即使在子项目中不写该依赖项，子项目也会从父项目中继承该依赖项（全部继承）
+dependencyManagement里只是声明依赖，并不实现引入，因此子项目需要显示的声明需要用的依赖。如果不在子项目中声明依赖，是不会从父项目中继承下来的；只有在子项目中写了该依赖项，并且没有指定具体版本，才会从父项目中继承该项，并且version和scope都读取自父pom;另外如果子项目中指定了版本号，那么会使用子项目中指定的jar版本。
+如：
+
+父POM:
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>${javaee-api.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+子POM:
+    <!--继承父类-->
+        <parent>
+            <artifactId>itoo-base-parent</artifactId>
+            <groupId>com.tgb</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+            <relativePath>../itoo-base-parent/pom.xml</relativePath>
+        </parent>
+
+    <!--依赖关系-->
+        <dependencies>
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+            </dependency>
+        </dependencies>
+
+(3) springboot项目：
+项目父工程将springboot项目作为父工程，引入到POM文件中：
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.2.0.RELEASE</version>
+    <relativePath/> <!-- lookup parent from repository -->
+</parent>
+springBoot项目打包：
+可执行程序打jar 包：
+【问题】：为什么打包jar包，不打war包，打war包目的是war包可以运行在tomcat下，但是SpringBoot是内置tomcat，如果你打war包，前提是干掉内置的tomcat，然后才能打包，各种麻烦，直接打包可执行jar包，使用java -jar 命令就可以完美的运行起来很方便！
+关于可执行程序(需要指定一个main类)打jar包就没这么方便了，我们需要考虑以下几个问题：
+配置文件需要打进jar包；
+需要指定main入口类；
+所依赖的第三方库也要打进jar包
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
+在POM中加入此插件，再点击maven [install]或[repackge]就会把当前项目里所有依赖包和当前项目的源码都打成一个JAR包，同时还会将没有依赖包的JAR包也打出来，以.original的就是了
+
+
+
+
+(4)Maven项目构建：
+Maven首先从当前构建项目开始查找父项目的pom文件，然后从本地仓库，最后从远程仓库。
+在多模块的工程中，如果模块之间存在依赖关系，那模块的编译必须要有顺序的要求。例如：P(parent)中包含A模块和B模块，且A模块依赖于B模块，那么在P中的pom,xml中需申明为：
+<modules>
+        <module>B</module>
+        <module>A</module>
+</modules>
+B需要声明在A的前面，这样先编译后的内容才能被A依赖。
+
+/**
+ * market项目发布到uat环境，编译时显示缺少goods项目api中的内容
+ * 此时有两种选择：
+ * (1) 在uat环境重新发布goods的api工程，并且这个api中需要包含market中需要的内容(这种情况下必须同时发布project和api工程)，替换掉uat环境本地仓库中的jar包。然后再发布market。
+ * (2) 在本地直接deploy goods的api工程到私服，并且这个api中需要包含market中需要的内容(这种情况下只需要发布api工程)。然后再发布market。
+ * 这两种情况都会将goods的api的快照版本的时间戳进行更新，在market项目构建时，依赖的如果是快照版本的jar包，则会比较本地仓库和私服的时间戳，选取最新的jar包进行构建。
+ * 如果只有某个特定的环境需要这个jar包，建议使用第一种方案，因为私服是多个环境公共的，如果发布私服可能会导致其他环境构建时都去私服拉取最新的jar包，可能会出现问题。
+ * 如果编译失败那么会尝试从私服拉取吗?
+ * 与编译成功或者失败无关，依据是快照版本和正式版本的策略，如果依赖的是快照版本，那么拉取的一定是最新的。即使构建失败也不会再去从私服上拉取。
+ */
+
+
+(5) 依赖传递和依赖排除
+依赖传递：如A依赖B，B依赖C，则A会间接依赖C
+依赖排除：依赖传递存在的问题，如果A依赖B，B依赖C，A依赖D，D依赖C，那么A就会引入两个C，就发生了jar包冲突

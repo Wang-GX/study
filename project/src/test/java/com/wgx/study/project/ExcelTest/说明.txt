@@ -1,0 +1,31 @@
+EasyExcel：
+https://www.cjavapy.com/mip/486/
+
+写的核心类:
+
+EasyExcel → ExcelWriter → → → →↓
+    ↓                              ↓
+ExcelWriterBuilder                  ↓
+    ↓                              ↓
+ExcelWriterSheetBuilder             ↓
+    ↓                              ↓
+doWrite(dataList);       write(dataList1,writeSheet1).write(dataList2,writeSheet1);[链式，返回ExcelWriter]
+一般用于单一sheet的写    一般用于多个sheet的写
+                              ↓
+                            finish();
+                            必须手动关闭流
+
+
+读的核心类:
+
+EasyExcel → ExcelReader → → → →↓
+    ↓                              ↓
+ExcelReaderBuilder                  ↓
+    ↓                              ↓
+ExcelReaderSheetBuilder             ↓
+    ↓                              ↓
+doRead();                read(sheet1,sheet2...)[同样支持链式，返回ExcelWriter]/readAll
+一般用于单一sheet的读    一般用于多个sheet的写                                 读取全部sheet
+                              ↓
+                            finish();
+                            必须手动关闭流

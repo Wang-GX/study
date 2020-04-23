@@ -1,0 +1,7 @@
+
+
+@NotEmpty：用在集合类上面，加了@NotEmpty的String类、Collection、Map、数组，是不能为null或者长度为0的(String、Collection、Map的isEmpty()方法)
+@NotBlank：用在String上面，纯空格的String也是不符合规则的。所以才会说@NotBlank用于String。
+@NotNull：用在基本类型上
+@Pattern(regexp = "^1[3456789]\\d{9}$", message = "手机号码格式不正确")：正则校验
+@Email(message = "邮箱格式不正确")：邮箱格式校验

@@ -1,0 +1,105 @@
+Mybatis-Plus
+
+1. 执行流程：
+   扫描实体类，通过反射分析出表有哪些字段，生成相应的SQL语句。
+   将这些SQL语句注入到Mybatis的容器中，就可以通过Mybatis去执行了。
+
+2. SpringBoot+Mybatis-Plus的使用
+   依赖：引入Mybatis-Plus启动器
+   TODO 特别注意！！！：
+        在引入了Mybatis-Plus后要注释掉Mybatis的依赖。报错信息参考：java.lang.NoClassDefFoundError: org/mybatis/logging/LoggerFactory
+        并且配置文件中的内容都要替换为Mybatis-Plus的配置。报错信息参考：org.apache.ibatis.binding.BindingException: Invalid bound statement (not found)
+
+   (1)Mapper接口继承BaseMapper接口，指定泛型为要操作的实体类。
+      如：public interface UserMapper extends BaseMapper<User>
+   (2)在实体类上添加@TableName("表名")注解，指定实体类和数据表的映射关系。(如果不加该注解则默认映射的是类名首字母小写的这张表)
+      如：@TableName("user")
+          public class User{...}
+
+      注意：
+        ①Mybatis-Plus默认开启驼峰匹配
+        ②对于不满足自动映射和驼峰匹配的字段，需要使用注解@TableField("字段名")指定映射关系
+        ③对于主键，需要使用注解@TableId(value = "id", type = IdType.AUTO)指定映射关系以及主键策略为自增长。
+          TODO 注意：即使数据表已经使用了主键自增长策略，也需要在实体类中添加该注解，并且type = IdType.AUTO。也可以通过配置文件进行全局配置(见配置文件，此处略)。
+               IdType是一个枚举类，定义了生成ID的类型：
+                     AUTO 数据库ID自增
+                     INPUT 用户输入ID
+                     ID_WORKER 全局唯一ID，Long类型的主键
+                     ID_WORKER_STR 字符串全局唯一ID
+                     UUID 全局唯一ID，UUID类型的主键
+                     NONE 该类型为未设置主键类型
+               当IdType的类型为ID_WORKER、ID_WORKER_STR或者UUID时，主键由MyBatis Plus的IdWorker类生成，idWorker中调用了分布式唯一 ID 生成器 - Sequence
+
+        ④如果某个属性在数据表中不存在映射字段，则必须使用@TableField(exist = false)标识
+
+3. BaseMapper实现通用CRUD操作
+   T为Mapper接口继承BaseMapper<T>中的泛型，即实体类对应的类型，下同
+   (1) selectById(Serializable id)：根据id查询
+   (2) selectBatchIds(Collection ids)：根据Ids批量查询
+   (3) selectOne(Wrapper<T> queryWrapper)：根据条件查询一条数据(如果有多条数据符合查询条件则会报错)
+   (4) selectList(Wrapper<T> queryWrapper)：根据条件查询多条数据
+   (5) selectCount(Wrapper<T> queryWrapper)：根据条件查询数据的数量
+   (6) selectPage(IPage<T> page,Wrapper<T> queryWrapper)：分页查询(必须配置分页插件，见MybatisPlusConfiguration类)
+   (7) insert(T)：新增
+   (8) updateById(T entity)：根据id更新
+   (9) update(T entity,Wrapper<T> updateWrapper)：根据条件更新
+   (10) deleteById(Serializable id)：根据id删除
+   (11) deleteBatchIds(Collection ids)；根据Ids批量删除
+   (12) deleteByMap(Map<String, Object> columnMap)：根据条件删除
+   (13) delete(Wrapper<T> wrapper)；根据条件删除(面向对象)
+
+4. ActiveRecord(简化CRUD)
+   对比使用BaseMapper，屏蔽了Mapper接口，直接将对数据库的操作封装在了实体类中。
+   使用方式：Mapper接口继承BaseMapper<T>，实体类对象继承Model<T>
+
+5.插件
+   (1)分页插件
+   (2)拦截器插件
+   (3)阻断插件(开发)
+   (4)性能分析插件(开发)(该插件于3.2.0版本移除)
+   (5)乐观锁插件
+   (6)SQL注入器
+   (7)自动填充
+   (8)逻辑删除
+   (9)通用枚举
+
+6. SQL注入器：就像MybatisPlus在BaseMapper中为我们定义好的那些通用方法一样，我们也可以继续扩展属于自己的通用方法。
+              BaseMapper
+                  ↑继承
+                  自定义BaseMapper
+                      ↑继承
+                      Mapper
+
+    使用方式(BaseMapper中定义好的方法也都是通过这种方式添加到Mybatis容器中供我们使用的)：
+        (1)编写自定义BaseMapper<T> 继承BaseMapper<T>。
+        (2)在自定义BaseMapper中自定义方法。
+        (4)编写自定义方法类，继承AbstractMethod，重写injectMappedStatement方法。用来将自定义的SQL语句转换为对应的Java中的mappedStatement对象。
+        (3)编写自定义SQL注入器，继承DefaultSqlInjector，重写getMethodList方法。用来将自定义方法添加入到Mybatis容器中。
+           TODO!!! 特别注意：重写getMethodList方法时，必须先调用父类同名方法获取到methodList，然后将自定义的方法类对象添加到该集合中并返回。否则在调用BaseMapper原有定义方法(如selectById())时，会抛出Invalid bound statement (not found)异常。
+        (5)将自定义SQL注入器注入到Spring的IOC容器中。
+        (5)Mapper接口调用Mybatis容器中的方法。
+
+7. 自动填充
+    如果使用[MybatisPlus!]提供的api操作数据库，在满足一定条件的情况下将会对数据表中的字段值进行自动填充。只适用于insert和update语句。
+    使用方式：
+        (1)实体类@TableField(fill = FieldFill.INSERT/UPDATE/INSERT_UPDATE)，指定针对哪种SQL语句进行自动填充。
+        (2)编写自定义SQL填充器实现MetaObjectHandler，重写insertFill或updateFill方法，指定在什么条件下进行自动填充。
+        (3)将自定义SQL填充器注入到Spring的IOC容器中。
+        (4)在调用特定的SQL语句以及满足自动填充条件时，字段的值将会被自动填充。
+
+8. 逻辑删除插件
+    使用逻辑删除后，调用MybatisPlus提供的delete相关api，不再执行delete语句，而是执行update语句对数据进行逻辑删除。
+    例如：UPDATE user SET deleted=1 WHERE id=1 AND deleted=0;
+    调用MybatisPlus提供的select相关api，都会在对应的SQL语句后面加上deleted = 0的条件，即不再查找已经被逻辑删除的数据记录。
+    使用方式：
+        (1)实体类和数据表中分别添加deleted属性/字段(3.3.0+可以自定义逻辑删除属性/字段名)，实体类deleted属性上添加@TableLogic注解。
+        (2)Spring配置文件中配置未逻辑删除的值(默认为0)和已逻辑删除的值(默认为1)。
+    注意：3.1.1+不需要配置bean，3.1.1-需要手动注入LogicSqlInjector(ISqlInjector的子类)到Spring的IOC容器中，由于SQL注入器也是ISqlInjector的子类并且也需要手动注入到Spring的IOC容器中，所以同时使用时可能会报错。因此建议使用3.1.1以上的版本。
+
+9. 通用枚举
+    个人感觉麻烦而且不太适用(略)，如果需要统一定义常量，使用普通枚举即可。
+
+10. 代码生成器
+    不太符合项目结构，检查需要耗费额外时间(略)
+
+11. 多数据源配置

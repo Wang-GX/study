@@ -1,0 +1,40 @@
+#返回根目录
+cd /
+#进入目录
+cd /目录名
+#滚动查看日志
+tail -f 文件名
+#根据关键字筛选日志(不全)
+grep -a "关键字" 文件名
+#根据关键字分页筛选日志(通过空格或者ctrl+f进行翻页，ctrl+b返回上一页【正确，但是失败】)(全)
+cat -n 文件名 |grep "关键字" |more
+#查看指定时间段的日志
+精确到分：grep '2019-11-08 13:40' 文件名
+分范围：grep '2019-11-08 13:4[1-2]' 文件名
+精确到秒：grep '2019-11-08 11:15:12' 文件名
+秒范围：grep '2019-11-08 11:15:1[2-3]' 文件名
+#查看当前路径
+pwd
+#查看当前目录下内容
+ll或者ls
+#查看当前主机ip
+ifconfig -----> inet 192.168.1.36
+
+分销关系
+A绑定为a的上级，则a购买分销商品参与返佣A会得到一定比例的佣金
+
+account_distributor_relation：分销关系绑定表
+    account_no：账号编号
+    parent_account_no：上级编号
+orders：订单表
+    account_no：账号编号
+    higher_promoter_no：上级编号
+    total_commission：订单总佣金
+    second_remaid_radio：二级返佣金额
+distribution_detailed_flow：分销商品订单返佣记录表
+    order_no：订单编号
+    single_person_no：下单人编号
+    parent_person_no：上级编号
+
+优惠券
+扣减顺序：顾问优惠-->优惠券-->健康币
