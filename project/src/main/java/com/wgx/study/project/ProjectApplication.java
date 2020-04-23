@@ -3,8 +3,11 @@ package com.wgx.study.project;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 
-@SpringBootApplication
 @MapperScan(basePackages = "com.wgx.study.project.common.mapper")
 //@EnableScheduling//开启@Scheduled注解标识的定时任务
 /**
@@ -21,6 +24,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * private UserMapper userMapper;//注意这里使用的是多态，即实际注入的是IOC容器中的动态代理对象，时刻要明确，接口是不能创建对象的，通过多态引用的一定是它的实现类对象
  *
  */
+//@EnableEurekaClient//只能用于Eureka注册中心
+@EnableDiscoveryClient
+//@EnableHystrix
+@EnableCircuitBreaker
+@SpringBootApplication
+//@SpringCloudApplication //可以取代上面三个
 public class ProjectApplication {
 
     public static void main(String[] args) {

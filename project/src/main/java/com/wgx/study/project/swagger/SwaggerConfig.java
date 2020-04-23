@@ -26,7 +26,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.demo"))//TODO 扫描controller
+                .apis(RequestHandlerSelectors.basePackage("com.wgx.study.project"))//TODO 扫描controller
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -34,7 +34,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("项目接口文档")
-                .description("work and study")
+                .description("study")
                 .version("1.0")
                 .build();
     }
