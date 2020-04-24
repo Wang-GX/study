@@ -42,12 +42,34 @@ for update;
 
 可重复读：写数据时加X锁，事务提交时释放，读数据时基于版本链读取的是快照，即快照读。但是由于更新操作是当前读，即读取的是最新的提交，所以仍然存在幻读问题。例如事务A读取了user表的全部数据(max id= 10)，此时事务B向user表中插入了一条数据(id = 11)，事务A再次进行读取，由于版本链的存在，事务A读取到的是快照，和之前读取到的一致(max id= 10)。但是当事务A试图向user表中插入id为11的数据时，发现该数据已经存在了，即产生了幻读。
 
-版本链：
-事务id
-回滚指针
 
+MVCC：
+SELECT TRX_ID FROM INFORMATION_SCHEMA.INNODB_TRX  WHERE TRX_MYSQL_THREAD_ID = CONNECTION_ID();
+https://blog.csdn.net/nmjhehe/article/details/98470570?depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1&utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1
+MVCC只对读已提交(RC)和可重复读(RR)级别生效，查询时不加读锁(这很重要)。
+开启事务，并且在执行第一条查询或者更新的SQL语句时会为当前事务生成事务id(数据库唯一，严格递增)：
+    begin/start transaction命令并不是一个事务的起点，在执行到它们之后的第一个操作InnoDB表的SQL语句，事务才真正启动，才会向MySQL申请事务id，MySQL内部是严格按照事务的启动顺序来分配事务id的。
+    如果未开启事务，每执行一次select，生成一个事务id。每执行一次update，生成两个事务id(应该是在update之前要先select一次，相当于两个SQL，开启了两个事务去执行)。
+    如果开启了事务，执行第一条select或者update时，生成一个事务id，作为当前事务的唯一标识，直至事务结束。
+数据一致性快照(readview)：[数据库中所有未提交的事务id列表(列表中的最小id为min_trx_id)]数据库中已创建的最大的事务id(max_trx_id)(无论事务是否提交)。
+RC级别每次执行查询时生成readview，RR级别只在第一次查询时生成readview
+隐藏行：为每条记录添加两个隐藏行，trx_id(事务id)和回滚指针((roll pointer)
+事务id：更新事务的id
+回滚指针：指向回滚日志(undo log)中当前数据的上一个历史版本
+undo log：回滚日志。执行更新操作前会先锁住将要更新的行(排它锁)，然后将数据复制一份到undo log中，接着才会去更新，最后将更新行的回滚指针指向undo log中更新行的上一个历史版本。
+版本链：由回滚指针连接数据的多个版本形成的链式结构，版本链的头部为当前数据的最新版本，版本链的尾部为当前数据的创建版本
+查询到的数据是由版本链和readview共同决定的。
 
+查询规则：
+(1)从版本链的头部自上而下开始搜索，找到符合条件的数据时判断数据头部的删除标记位是否为true，如果为true，停止搜索，并且不返回任何数据。如果为false(默认)，停止搜索，并返回该版本数据
+(2)如果被访问版本的trx_id小于Readview中的min_trx_id，表明生成该版本的事务在当前事务生成ReadView前已经提交，所以该版本可以被当前事务访问。
+(3)如果被访问版本的trx_id大于ReadView中的max_trx_id值，表明生成该版本的事务在当前事务生成ReadView后才开启，所以该版本不可以被当前事务访问。
+(4)如果被访问版本的trx_id在ReadView的min_trx_id和max_trx_id之间，那就需要判断一下trx_id是否在未提交的事务id列表中，如果在，说明创建ReadView时生成该版本的事务未提交的，该版本只能被该事务id访问；如果不在，说明创建ReadView时生成该版本的事务已经提交，该版本可以被访问。
 
+几个问题：
+(1)MVCC存在哪几种阻塞情况：由于查询时不加读锁，所以只有当多个事务更新同一条数据时才会因为写锁而阻塞。
+(2)MVCC实现的可重复读是否会出现幻读：会
+   MVCC解决了查询时的幻读问题(通过版本链和readview实现快照读)，但是更新时的幻读问题并没有解决(更新时读的永远是最新提交的数据，即当前读)
 
 
 
