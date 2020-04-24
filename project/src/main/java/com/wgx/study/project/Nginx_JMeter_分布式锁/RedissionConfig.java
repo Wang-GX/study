@@ -11,7 +11,7 @@ public class RedissionConfig {
     @Bean
     public Redisson redisson() {
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://localhost:6379").setDatabase(0);
+        config.useSingleServer().setAddress("redis://119.3.56.222:6379").setPassword("geP7wDxRtwn").setDatabase(0);
         /*config.useClusterServers()
                 .addNodeAddress("redis://localhost:8081")
                 .addNodeAddress("redis://localhost:8082")

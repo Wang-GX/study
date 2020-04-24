@@ -9,10 +9,16 @@
         <version>2.2.6.RELEASE</version>
     </parent>
 
+    <modules>
+        <module>eureka</module>
+        <module>project</module>
+    </modules>
+
     <groupId>com.wgx</groupId>
     <artifactId>study</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>study</name>
+    <packaging>pom</packaging>
 
     <properties>
         <java.version>1.8</java.version>
@@ -31,7 +37,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!--定义子工程的SpringCloud版本-->
+            <!--定义子工程的SpringCloud版本，SpringCloud的版本决定了其组件的版本-->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
