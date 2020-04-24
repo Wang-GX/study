@@ -1,3 +1,11 @@
 ES
 Lcn分布式事务
 手动启动器，并完成SpringBoot自动配置的模拟效果
+
+*SpringCloud组件及配置：eureka、zuul、
+Hystrix仪表盘
+
+
+Redis原理、集群
+分布式锁
+Nginx

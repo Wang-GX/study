@@ -7,6 +7,7 @@ import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
+import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 
 @MapperScan(basePackages = "com.wgx.study.project.common.mapper")
 //@EnableScheduling//开启@Scheduled注解标识的定时任务
@@ -28,6 +29,7 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 @EnableDiscoveryClient
 //@EnableHystrix
 @EnableCircuitBreaker
+@EnableHystrixDashboard
 @SpringBootApplication
 //@SpringCloudApplication //可以取代上面三个
 public class ProjectApplication {

@@ -44,8 +44,6 @@ for update;
 
 
 MVCC：
-SELECT TRX_ID FROM INFORMATION_SCHEMA.INNODB_TRX  WHERE TRX_MYSQL_THREAD_ID = CONNECTION_ID();
-https://blog.csdn.net/nmjhehe/article/details/98470570?depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1&utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1
 MVCC只对读已提交(RC)和可重复读(RR)级别生效，查询时不加读锁(这很重要)。
 开启事务，并且在执行第一条查询或者更新的SQL语句时会为当前事务生成事务id(数据库唯一，严格递增)：
     begin/start transaction命令并不是一个事务的起点，在执行到它们之后的第一个操作InnoDB表的SQL语句，事务才真正启动，才会向MySQL申请事务id，MySQL内部是严格按照事务的启动顺序来分配事务id的。
@@ -72,6 +70,8 @@ undo log：回滚日志。执行更新操作前会先锁住将要更新的行(�
    MVCC解决了查询时的幻读问题(通过版本链和readview实现快照读)，但是更新时的幻读问题并没有解决(更新时读的永远是最新提交的数据，即当前读)
 
 
+查看当前事务的事务id：SELECT TRX_ID FROM INFORMATION_SCHEMA.INNODB_TRX  WHERE TRX_MYSQL_THREAD_ID = CONNECTION_ID();
+https://blog.csdn.net/nmjhehe/article/details/98470570?depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1&utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1
 
 
 
