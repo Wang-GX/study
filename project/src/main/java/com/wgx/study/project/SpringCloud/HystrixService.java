@@ -45,7 +45,7 @@ public class HystrixService {
             @HystrixProperty(name = "circuitBreaker.enabled", value = "true"),//是否开启熔断机制
             @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),//触发熔断的最小请求次数
             @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000"),//熔断器从打开状态到半开状态的休眠时长
-            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "20"),//触发熔断的失败请求最小占比
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "60"),//触发熔断的失败请求最小占比
     })
     public String testCircuitBreaker() {
         try {
@@ -62,6 +62,7 @@ public class HystrixService {
     }
 
     public String fallback() {
+        System.out.println("请求失败");
         return "ERROR";
     }
 

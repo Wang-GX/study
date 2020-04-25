@@ -1,6 +1,5 @@
 package com.wgx.study.project.SpringCloud;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ public class HystrixController {
     @Autowired
     private HystrixService hystrixService;
 
-    @PostMapping("/testRequestTimeOut")
+    @PostMapping("/testRequestTimeOutFallback")
     public String testRequestTimeOutFallback() {
         return hystrixService.testRequestTimeOutFallback();
     }
@@ -32,7 +31,6 @@ public class HystrixController {
     public String testCircuitBreaker() {
         return hystrixService.testCircuitBreaker();
     }
-
 
     @PostMapping("/successRequest")
     public String successRequest() {
