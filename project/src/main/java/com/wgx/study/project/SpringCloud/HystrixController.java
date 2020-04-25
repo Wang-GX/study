@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,21 +23,15 @@ public class HystrixController {
         return hystrixService.testRequestTimeOutFallback();
     }
 
-    @PostMapping("/testRequestTimeOutDefaultFallBack")
-    public String testRequestTimeOutDefaultFallback() {
-        return hystrixService.testRequestTimeOutDefaultFallback();
+    @PostMapping("/testRequestTimeOutDefaultFallBack/{id}")
+    public String testRequestErrorAndDefaultFallback(@PathVariable("id")Integer id) {
+        return hystrixService.testRequestErrorAndDefaultFallback(id);
     }
 
-    @PostMapping("/testCircuitBreaker")
-    public String testCircuitBreaker() {
-        return hystrixService.testCircuitBreaker();
+    @PostMapping("/testCircuitBreaker/{id}")
+    public String testCircuitBreaker(@PathVariable("id")Integer id) {
+        return hystrixService.testCircuitBreaker(id);
     }
-
-    @PostMapping("/successRequest")
-    public String successRequest() {
-        return hystrixService.successRequest();
-    }
-
 
     //HystrixDashboard的bean对象
     @Bean
