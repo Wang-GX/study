@@ -37,7 +37,7 @@ public class HystrixService {
         if (true){
             throw new RuntimeException();
         }
-        return "SUCCESS";
+        return null;
     }
 
     @HystrixCommand(fallbackMethod = "circuitBreakerFallBack", commandProperties = {
@@ -57,7 +57,7 @@ public class HystrixService {
         return "ERROR";
     }
 
-    //注意：默认降级方法不能有参数，此时原方法可以有参数
+    //注意：默认降级方法不能有参数，此时原方法可以有参数。但是返回值类型仍然必须和原方法保持一致
     public String defaultFallBack() {
         return "默认提示：对不起，网络太拥挤了！";
     }
