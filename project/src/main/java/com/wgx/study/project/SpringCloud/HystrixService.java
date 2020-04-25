@@ -1,9 +1,12 @@
 package com.wgx.study.project.SpringCloud;
 
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.stereotype.Service;
 
 @Service
+@DefaultProperties(defaultFallback = "defaultFallBack")//可以在类上指明统一的失败降级方法
 public class HystrixService {
 
     /**
@@ -11,18 +14,60 @@ public class HystrixService {
      *
      * @return
      */
-    @HystrixCommand(fallbackMethod = "fallback")
-    public String testRequestTimeOut(){
+    //@HystrixCommand注解加在方法上表示对该方法使用降级或熔断
+    //fallbackMethod：指定降级方法
+    //@HystrixProperty注解了设置hystrix属性的方法。可以在HystrixPropertiesManager类中找到对应的name值
+    @HystrixCommand(fallbackMethod = "fallback", commandProperties = {
+            //设置该方法触发降级的超时时间为5s
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
+    })
+    public String testRequestTimeOutFallback() {
         try {
-            Thread.sleep(3000);
-        }catch (Exception e){
+            Thread.sleep(10000);
+        } catch (Exception e) {
 
         }
         return "SUCCESS";
     }
 
-    public String fallback(){
+    @HystrixCommand
+    public String testRequestTimeOutDefaultFallback() {
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+
+        }
+        return "SUCCESS";
+    }
+
+    @HystrixCommand(fallbackMethod = "fallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "200"),
+            @HystrixProperty(name = "circuitBreaker.enabled", value = "true"),//是否开启熔断机制
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),//触发熔断的最小请求次数
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000"),//熔断器从打开状态到半开状态的休眠时长
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "20"),//触发熔断的失败请求最小占比
+    })
+    public String testCircuitBreaker() {
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+
+        }
+        return "SUCCESS";
+    }
+
+    @HystrixCommand
+    public String successRequest() {
+        return "SUCCESS";
+    }
+
+    public String fallback() {
         return "ERROR";
     }
+
+    public String defaultFallBack() {
+        return "默认提示：对不起，网络太拥挤了！";
+    }
+
 
 }

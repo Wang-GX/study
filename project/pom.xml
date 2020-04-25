@@ -211,6 +211,12 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
         </dependency>
+        <!--hutool工具类-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId><!--https://www.hutool.cn/docs/#/-->
+            <version>5.3.2</version>
+        </dependency>
 
 
         <!--zipkin链路监控-->
