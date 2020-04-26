@@ -37,7 +37,7 @@ public class HystrixService {
         if (true){
             throw new RuntimeException();
         }
-        return null;
+        return "SUCCESS";
     }
 
     @HystrixCommand(fallbackMethod = "circuitBreakerFallBack", commandProperties = {
