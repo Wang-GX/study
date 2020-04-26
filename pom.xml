@@ -11,6 +11,7 @@
 
     <modules>
         <module>eureka</module>
+        <module>eureka02</module>
         <module>zuul</module>
         <module>project</module>
     </modules>

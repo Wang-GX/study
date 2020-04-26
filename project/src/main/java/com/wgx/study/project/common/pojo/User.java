@@ -21,7 +21,7 @@ public class User extends Model<User> implements Serializable {
     //可以点击IDEA左侧的Structure查看当前类的结构(属性，方法)
 
     @ApiModelProperty(value = "主键id", name = "主键id")
-    @TableId(value = "id", type = IdType.AUTO)//指定id类型为数据库自增长
+    @TableId(value = "id", type = IdType.AUTO)//指定id类型为数据库自增长，如果不加这个注解那么就会使用MybatisPlus默认的id生成策略(默认是生成一个长数字字符串)。
     private Integer id;
     @ApiModelProperty(value = "用户名", name = "用户名")
     @TableField(value = "user_name")
