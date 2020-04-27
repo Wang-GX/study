@@ -4,6 +4,7 @@ import com.wgx.study.project.common.pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -33,6 +34,9 @@ public class MessageSender {
         //构建消息
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.getHeaders().put("messageId", uuid);
+        //消息持久化
+        messageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+        //TODO 该对象只有id一个属性，用来标识消息的唯一性
         CorrelationData correlationData = new CorrelationData();
         correlationData.setId(uuid);
         Message message = new Message("GM00000001".getBytes(), messageProperties);//如果消息是字符串
@@ -63,6 +67,8 @@ public class MessageSender {
             //构建消息
             MessageProperties messageProperties = new MessageProperties();
             messageProperties.setMessageId(uuid);
+            //消息持久化
+            messageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
             CorrelationData correlationData = new CorrelationData(uuid);
             //Message message = new Message("GM00000001".getBytes(), messageProperties);//如果消息是字符串
             User user = new User();

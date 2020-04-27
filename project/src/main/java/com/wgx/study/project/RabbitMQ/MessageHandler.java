@@ -23,6 +23,7 @@ public class MessageHandler {
 
         try {
             //System.out.println(1/0);
+            //这里的messageId对应的就是发送消息时封装的CorrelationData对象的id属性
             String messageId = (String) message.getMessageProperties().getHeaders().get("messageId");
             String payload = new String(message.getBody());
             log.info("领取消费消息，消息index：" + deliveryTag + "，消息id：" + messageId + "，消息内容：" + payload);

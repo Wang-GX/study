@@ -2,10 +2,13 @@ ES
 Lcn分布式事务
 手动启动器，并完成SpringBoot自动配置的模拟效果
 
-*SpringCloud组件及配置：eureka、zuul、
-Hystrix仪表盘
-
+51
+*zuul(今天)
+*Nginx实线网关的负载均衡
+*springSecurity安全框架 JWT
+SpringCloud组件：消息总线
+apollo
 
 Redis原理、集群
 分布式锁
-Nginx
+SpringCloud组件：消息总线
