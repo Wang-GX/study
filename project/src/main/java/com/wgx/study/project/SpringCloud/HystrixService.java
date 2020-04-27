@@ -21,7 +21,7 @@ public class HystrixService {
     //@HystrixProperty注解了设置hystrix属性的方法。可以在HystrixPropertiesManager类中找到对应的name值
     @HystrixCommand(fallbackMethod = "fallback", commandProperties = {
             //设置该方法触发降级的超时时间为5s
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),//特定配置的优先级高于配置文件中的全局配置
     })
     public String testRequestTimeOutFallback() {
         try {

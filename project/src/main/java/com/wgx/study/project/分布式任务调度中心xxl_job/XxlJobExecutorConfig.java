@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * xxl-job执行器配置类
  */
-@Configuration
+//@Configuration
 public class XxlJobExecutorConfig {
     private Logger logger = LoggerFactory.getLogger(XxlJobExecutorConfig.class);
 
@@ -36,7 +36,7 @@ public class XxlJobExecutorConfig {
     private int logRetentionDays;
 
 
-    @Bean
+    //@Bean
     public XxlJobSpringExecutor xxlJobExecutor() {
         logger.info("正在配置xxl-job执行器");
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
