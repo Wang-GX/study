@@ -57,6 +57,7 @@ having关键字：
 and & or关键字：
    结果集中的数据记录必须同时满足and关键字连接的两个运算，and连接的两个运算可以在外面加上括号并且看做一个整体的运算
    结果集中的数据记录只需要满足任意一个or关键字连接的两个运算
+   如果and和or混合使用则优先拼接两个and条件连接的运算
    括号括起来的看做一个整体的运算
 
    示例：
@@ -65,6 +66,9 @@ and & or关键字：
 
         select * from employee where sex = '男' and (name = '张三' or name = '李四');
         查询出所有姓名为张三的男性或者姓名为李四的男性，可以看做 (' sex = '男' ' and 'name = '张三' ') or (' sex = '男' ' and 'name = '李四' ')
+
+        select * from employee where name = '张三' or name ='李四' and sex = 1;  ==  select * from employee where name = '张三' or (name ='李四' and sex = 1);
+        查询出所有姓名为张三的或者姓名为李四的男性
 
 修改字段注释：
         ALTER TABLE `数据库名`.`表名` MODIFY COLUMN `字段名` 字段类型(长度) NOT NULL COMMENT '字段注释';
