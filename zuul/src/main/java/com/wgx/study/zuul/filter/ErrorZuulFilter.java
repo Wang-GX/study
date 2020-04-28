@@ -9,7 +9,7 @@ import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.stereotype.Component;
 
 //TODO 未完成
-@Component
+//@Component
 public class ErrorZuulFilter extends ZuulFilter {
 
     private final Logger LOGGER = LoggerFactory.getLogger(PreZuulFilter.class);

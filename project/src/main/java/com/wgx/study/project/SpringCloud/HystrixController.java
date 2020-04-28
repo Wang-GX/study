@@ -2,6 +2,7 @@ package com.wgx.study.project.SpringCloud;
 
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(value = "Hystrix分布式微服务降级或熔断", tags = "Hystrix分布式微服务降级或熔断")
+@Slf4j
 @RestController
 @RequestMapping("/hystrix")
 public class HystrixController {
@@ -24,14 +26,26 @@ public class HystrixController {
     }
 
     @PostMapping("/testRequestTimeOutDefaultFallBack/{id}")
-    public String testRequestErrorAndDefaultFallback(@PathVariable("id")Integer id) {
+    public String testRequestErrorAndDefaultFallback(@PathVariable("id") Integer id) {
         return hystrixService.testRequestErrorAndDefaultFallback(id);
     }
 
     @PostMapping("/testCircuitBreaker/{id}")
-    public String testCircuitBreaker(@PathVariable("id")Integer id) {
+    public String testCircuitBreaker(@PathVariable("id") Integer id) {
         return hystrixService.testCircuitBreaker(id);
     }
+
+    /**
+     * 该方法仅用于测试网关的Ribbon重试配置是否生效
+     *
+     * @return
+     */
+    @PostMapping("/testErrorRequest")
+    public String testErrorRequest() {
+        log.info("testErrorRequest");
+        return hystrixService.testErrorRequest();
+    }
+
 
     //HystrixDashboard的bean对象
     @Bean

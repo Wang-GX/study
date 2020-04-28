@@ -66,4 +66,14 @@ public class HystrixService {
     public String circuitBreakerFallBack(Integer id) {
         return "id 不能为负数，请稍后再试，id:" + id;
     }
+
+
+    public String testErrorRequest() {
+        try {
+            Thread.sleep(30000);
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
 }
