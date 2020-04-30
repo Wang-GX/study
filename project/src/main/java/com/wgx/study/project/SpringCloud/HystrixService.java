@@ -68,12 +68,16 @@ public class HystrixService {
     }
 
 
-    public String testErrorRequest() {
+    public String testZuulRetry() {
         try {
             Thread.sleep(30000);
         } catch (Exception e) {
 
         }
         return null;
+    }
+
+    public String testErrorFilter() {
+        throw new RuntimeException();
     }
 }

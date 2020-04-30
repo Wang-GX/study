@@ -19,22 +19,3 @@ pwd
 ll或者ls
 #查看当前主机ip
 ifconfig -----> inet 192.168.1.36
-
-分销关系
-A绑定为a的上级，则a购买分销商品参与返佣A会得到一定比例的佣金
-
-account_distributor_relation：分销关系绑定表
-    account_no：账号编号
-    parent_account_no：上级编号
-orders：订单表
-    account_no：账号编号
-    higher_promoter_no：上级编号
-    total_commission：订单总佣金
-    second_remaid_radio：二级返佣金额
-distribution_detailed_flow：分销商品订单返佣记录表
-    order_no：订单编号
-    single_person_no：下单人编号
-    parent_person_no：上级编号
-
-优惠券
-扣减顺序：顾问优惠-->优惠券-->健康币

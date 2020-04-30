@@ -49,7 +49,8 @@ public class PreZuulFilter extends ZuulFilter {
             ctx.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());//设置请求上下文的返回状态码，让下一个Filter看到当前Filter处理完毕后的状态(401：表示没有访问权限)
             ctx.setResponseBody("非法访问");
             //无任何意义的返回值，最终返回客户端的是RequestContext对象
-            return null;
+            ctx.setThrowable(new Throwable("非法访问"));
+            throw new RuntimeException();
         }
         ctx.setSendZuulResponse(true);//对该请求进行路由
         ctx.setResponseStatusCode(HttpStatus.OK.value());//设置请求上下文的返回状态码，让下一个Filter看到当前Filter处理完毕后的状态

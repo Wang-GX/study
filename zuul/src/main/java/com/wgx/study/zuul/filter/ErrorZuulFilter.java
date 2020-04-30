@@ -1,38 +1,43 @@
 package com.wgx.study.zuul.filter;
 
-import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
-import com.netflix.zuul.exception.ZuulException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+import org.springframework.cloud.netflix.zuul.filters.post.SendErrorFilter;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 
-//TODO 未完成
-//@Component
-public class ErrorZuulFilter extends ZuulFilter {
+import javax.servlet.http.HttpServletResponse;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(PreZuulFilter.class);
 
-    @Override
-    public boolean shouldFilter() {
-        return true;
-    }
+@Component
+public class ErrorZuulFilter extends SendErrorFilter {
 
-    @Override
-    public Object run() throws ZuulException {
-        RequestContext ctx = RequestContext.getCurrentContext();
-        LOGGER.error("异常过滤器执行");
-        return null;
-    }
+	private final Logger LOGGER = LoggerFactory.getLogger(ErrorZuulFilter.class);
 
-    @Override
-    public String filterType() {
-        return FilterConstants.ERROR_TYPE;
-    }
+	@Override
+	public Object run() {
+		String msg="请求失败！";
+		RequestContext ctx = RequestContext.getCurrentContext();
+		try{
+			ExceptionHolder exception = findZuulException(ctx.getThrowable());
+			LOGGER.error("错误信息:"+exception.getErrorCause());
+			msg+="error:"+exception.getErrorCause();
+			HttpServletResponse response = ctx.getResponse();
+			response.setCharacterEncoding("UTF-8");
+			response.getOutputStream().write(msg.getBytes());
+		}catch (Exception ex) {
+			ex.printStackTrace();
+			ReflectionUtils.rethrowRuntimeException(ex);
+		} finally {
+			ctx.remove("throwable");
+		}
+		//无任何意义的返回值，最终返回的是RequestContext
+		return null;
+	}
 
-    @Override
-    public int filterOrder() {
-        return 0;
-    }
+	@Override
+	public int filterOrder() {
+		return -1;
+	}
 }

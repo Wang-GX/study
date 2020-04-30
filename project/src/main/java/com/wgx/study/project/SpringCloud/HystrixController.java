@@ -40,10 +40,21 @@ public class HystrixController {
      *
      * @return
      */
-    @PostMapping("/testErrorRequest")
-    public String testErrorRequest() {
-        log.info("testErrorRequest");
-        return hystrixService.testErrorRequest();
+    @PostMapping("/testZuulRetry")
+    public String testZuulRetry() {
+        log.info("testZuulRetry");
+        return hystrixService.testZuulRetry();
+    }
+
+    /**
+     * 该方法仅用于测试网关的ERROR过滤器是否生效
+     *
+     * @return
+     */
+    @PostMapping("/testErrorFilter")
+    public String testErrorFilter() {
+        log.info("testErrorFilter");
+        return hystrixService.testErrorFilter();
     }
 
 

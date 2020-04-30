@@ -5,4 +5,9 @@ Zuul中定义了四种标准过滤器类型，这些过滤器类型对应于请�
 (2)ROUTING:在路由请求时候被调用。这种过滤器用于构建发送给微服务的请求，并使用Apache HttpClient或Netfilx Ribbon请求微服务。
 (3)POST:在routing和error过滤器之后被调用。可以用于统计返回值和调用时间、记录日志、增加跨域头等行为。
 (4)ERROR:处理请求时发生错误时被调用。用于异常的统一处理和返回。
+   有两种实现方式：
+     (1)继承SendErrorFilter(ZuulFilter的默认实现类)(建议)，重写run方法。如果不想继续传递到SendErrorFilter中，可以重写filterOrder方法，设置自定义过滤器的优先级SendErrorFilter(数值为0)，并且在run方法中调用RequestContext对象的remove("throwable")方法，移除throwable属性的值(SendErrorFilter是否执行的判断依据是throwable属性的值是否存在)，也可以在配置文件中直接禁用掉SendErrorFilter(不推荐)。
+     (2)继承ZuulFilter，其余同上。
+     特别注意：一旦在Zuul网关过滤器传递过程中出现了异常，那么ERROR过滤器就会按照优先级依次执行(即使进行了try-catch也会执行)。所以如果不禁用掉SendErrorFilter过滤器并且也不希望它执行，那么必须在run方法中调用RequestContext对象的remove("throwable")方法，移除throwable属性的值。
 一个请求会先按顺序通过所有的前置过滤器，之后在路由过滤器中转发给后端应用，得到响应后又会通过所有的后置过滤器，最后响应给客户端。在整个流程中如果发生了异常则会跳转到错误过滤器中。
+需要特别注意的是(仔细观察doc目录下Zuul网关过滤器.jpg)，这里的异常指的是请求在Zuul网关的过滤器传递过程中出现的异常，包括网关自己抛出的异常(例如网关找不到可用服务)以及我们在过滤器中手动抛出的异常，而非被请求的服务中处理时的异常。
