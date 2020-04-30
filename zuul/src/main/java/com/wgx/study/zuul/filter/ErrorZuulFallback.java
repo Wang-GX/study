@@ -18,7 +18,7 @@ public class ErrorZuulFallback implements FallbackProvider {
     private static final String SERVER_NAME = "project-service";
 
     /**
-     * 指定该回调类生效的路由服务名称
+     * 指定该回调类生效的路由服务名称，当网关路由请求到该服务时，如果请求失败，则会触发回调
      *
      * @return Eureka中注册的服务id，如果需要路由所有服务都支持回退，则return"*"或return null
      */
@@ -37,7 +37,7 @@ public class ErrorZuulFallback implements FallbackProvider {
 	@Override
 	public ClientHttpResponse fallbackResponse(String route, Throwable cause) {
 
-        System.out.println(route);
+        System.out.println("服务:" + route + "触发网关fallback回调:" + cause);
 
 		//标记不同的异常为不同的http状态值
 		if (cause instanceof HystrixTimeoutException) {

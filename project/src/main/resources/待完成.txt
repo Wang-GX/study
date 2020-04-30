@@ -3,7 +3,7 @@ Lcn分布式事务
 手动启动器，并完成SpringBoot自动配置的模拟效果
 
 51
-*zuul的fallback(今天)，JWT生成token，网关后置过滤器。->预计12点前结束
+*(今天)网关完整流程图(过滤器&fallback回调)、JWT生成token，网关后置过滤器。->预计12点前结束
 *Nginx实线网关的负载均衡
 *springSecurity安全框架
 apollo

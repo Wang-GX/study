@@ -13,14 +13,13 @@ import com.netflix.zuul.context.RequestContext;
 /**
  * 自定义网关后置过滤器：处理返回值内容，添加响应头 啊啊
  */
-//@Component
+@Component
 public class PostZuulFilter extends ZuulFilter {
 
     //是否执行过滤器，如果返回true则执行run方法，如果返回false则过滤器不生效
     @Override
     public boolean shouldFilter() {
         return true;
-
     }
 
     //过滤器执行逻辑

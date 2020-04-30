@@ -76,8 +76,4 @@ public class HystrixService {
         }
         return null;
     }
-
-    public String testErrorFilter() {
-        throw new RuntimeException();
-    }
 }

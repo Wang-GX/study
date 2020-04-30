@@ -36,7 +36,10 @@ public class HystrixController {
     }
 
     /**
-     * 该方法仅用于测试网关的Ribbon重试配置是否生效
+     * 该方法用于测试网关的Ribbon重试配置是否生效
+     * 该方法用于测试网关的fallback是否生效
+     * 如果未开启重试，则网关请求project服务时由于请求超时执行网关fallback回调
+     * 如果开启了重试，则网关请求project服务时由于请求超时会先进行重试，最终执行网关fallback回调
      *
      * @return
      */
@@ -44,17 +47,6 @@ public class HystrixController {
     public String testZuulRetry() {
         log.info("testZuulRetry");
         return hystrixService.testZuulRetry();
-    }
-
-    /**
-     * 该方法仅用于测试网关的ERROR过滤器是否生效
-     *
-     * @return
-     */
-    @PostMapping("/testErrorFilter")
-    public String testErrorFilter() {
-        log.info("testErrorFilter");
-        return hystrixService.testErrorFilter();
     }
 
 
