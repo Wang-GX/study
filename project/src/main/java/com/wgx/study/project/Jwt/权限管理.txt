@@ -1,0 +1,32 @@
+1.有状态服务和无状态服务
+    基础知识：
+        会话：浏览器从打开到关闭的过程称为一次会话过程，为了保存会话过程中产生的数据，在Servlet技术中，提供了两个用于保存会话数据的对象，分别是Cookie和Session。
+        Cookie：客户端(浏览器)保存会话数据的技术。
+        Session：服务端保存会话数据的技术。通常情况下，Session是借助Cookie来传递id属性到客户端的。
+                 一次会话过程对应一个Session对象，如果请求中没有携带sessionId，那么服务器会创建一个新的Session对象。
+                 如果请求中携带了sessionId，那么服务器会根据携带的sessionId找到对应的Session对象。如果Session对象已经失效了，则会创建新的Session对象，如果没有失效则会使用找到的Session对象
+                 注意：
+                 在一次会话过程中，只要Session对象还没有过期，那么客户端的每次请求都会刷新此次会话的sessionId对应的Session对象的过期时间(或者使用JS定时刷新)。
+                 关闭浏览器(一次会话过程结束)时，会删除客户端上保存当前sessionId的Cookie对象，但是不会删除服务端保存的Session对象。
+                 Session对象只有在以下情况出现时才会从服务端删除：
+                    (1)程序调用HttpSession.invalidate();
+                    (2)距离上一次收到客户端发送的session id时间间隔超过了session的最大有效时间。
+                    (3)服务器进程被停止。
+
+(1)有状态登录：
+    典型的场景：
+        客户端用户登录->服务端验证登录，生成session保存在服务端，通过cookie保存sessionId返回给客户端
+        客户端携带cookie访问->服务端从cookie中获取sessionId，找到服务端保存的session，解析用户信息，返回数据。
+    存在的问题：
+        (1)session保存在服务器的内存中，会对服务器造成较大的压力。
+        (2)session是由tomcat创建的，无法在微服务集群中共享。
+(2)无状态登录：
+    典型的场景：
+        客户端用户登录->服务端验证登录，生成token，通过cookie保存token返回给客户端
+        客户端携带token访问->服务端校验token，解析用户信息，返回数据。
+
+JWT+RSA非对称加密
+JWT包含三部分数据：
+    (1)头部
+    (2)载荷
+    (3)签名

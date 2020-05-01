@@ -1,11 +1,13 @@
 package com.wgx.study.project.SpringBoot自动配置;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 //@Component：和下面的注解任选其一，如果选择这个注解，则需要删除配置类中的@EnableConfigurationProperties(MyProperties.class)注解
+@Data
 @ConfigurationProperties(prefix = "game.config")
 @PropertySource(value = "classpath:my.properties")
 public class MyProperties {
@@ -26,75 +28,6 @@ public class MyProperties {
     private String clothsName;
     private Integer defensivePower;
 
-
-    public String getPersonName() {
-        return personName;
-    }
-
-    public void setPersonName(String personName) {
-        this.personName = personName;
-    }
-
-    public Integer getSex() {
-        return sex;
-    }
-
-    public void setSex(Integer sex) {
-        this.sex = sex;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getWeaponName() {
-        return weaponName;
-    }
-
-    public void setWeaponName(String weaponName) {
-        this.weaponName = weaponName;
-    }
-
-    public Integer getAttackPower() {
-        return attackPower;
-    }
-
-    public void setAttackPower(Integer attackPower) {
-        this.attackPower = attackPower;
-    }
-
-    public String getClothsName() {
-        return clothsName;
-    }
-
-    public void setClothsName(String clothsName) {
-        this.clothsName = clothsName;
-    }
-
-    public Integer getDefensivePower() {
-        return defensivePower;
-    }
-
-    public void setDefensivePower(Integer defensivePower) {
-        this.defensivePower = defensivePower;
-    }
-
-    @Override
-    public String toString() {
-        return "MyProperties{" +
-                "personName='" + personName + '\'' +
-                ", sex=" + sex +
-                ", age=" + age +
-                ", weaponName='" + weaponName + '\'' +
-                ", attackPower=" + attackPower +
-                ", clothsName='" + clothsName + '\'' +
-                ", defensivePower=" + defensivePower +
-                '}';
-    }
 }
 
 

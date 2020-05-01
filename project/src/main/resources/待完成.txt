@@ -4,6 +4,7 @@ Lcn分布式事务
 
 51
 *(今天)网关完整流程图(过滤器&fallback回调)、JWT生成token，网关后置过滤器。->预计12点前结束
+            统一业务异常捕获
 *Nginx实线网关的负载均衡
 *springSecurity安全框架
 apollo

@@ -25,7 +25,7 @@ public class PreZuulFilter extends ZuulFilter {
     public boolean shouldFilter() {
         //此方法可以根据请求的url进行判断是否需要拦截
         //如果是优先级最高的前置过滤器，那么不需要考虑请求上下文对象的响应状态码
-        return true;
+        return !RequestContext.getCurrentContext().getRequest().getRequestURI().equals("/api/project-service/jwt/login");
     }
 
     @Override
@@ -50,14 +50,13 @@ public class PreZuulFilter extends ZuulFilter {
             ctx.setResponseBody("非法访问");
             //无任何意义的返回值，最终返回客户端的是RequestContext对象
             ctx.setThrowable(new Throwable("非法访问"));
-            throw new RuntimeException();//如果此处抛出异常，则请求不会路由到project服务，直接进入ERROR过滤器 -> POST过滤器 -> 结束
-            //return null;//如果此处返回null，表示不做任何处理，则请求不会进入ERROR过滤器。按照执行顺序应该接下来应该将请求路由到project服务，但是由于已经设置了setSendZuulResponse(false)，所以请求不会路由到project服务，直接进入POST过滤器 -> 结束
+            //throw new RuntimeException();//如果此处抛出异常，则请求不会路由到project服务，直接进入ERROR过滤器 -> POST过滤器 -> 结束
+            return null;//如果此处返回null，表示不做任何处理，则请求不会进入ERROR过滤器。按照执行顺序应该接下来应该将请求路由到project服务，但是由于已经设置了setSendZuulResponse(false)，所以请求不会路由到project服务，直接进入POST过滤器 -> 结束
         }
         ctx.setSendZuulResponse(true);//对该请求进行路由
         ctx.setResponseStatusCode(HttpStatus.OK.value());//设置请求上下文的返回状态码，让下一个Filter看到当前Filter处理完毕后的状态
         //无任何意义的返回值，最终返回的是RequestContext
         return null;
-
 
     }
 
