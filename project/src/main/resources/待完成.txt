@@ -3,12 +3,10 @@ Lcn分布式事务
 手动启动器，并完成SpringBoot自动配置的模拟效果
 
 51
-*(今天)网关完整流程图(过滤器&fallback回调)、JWT生成token，网关后置过滤器。->预计12点前结束
-            统一业务异常捕获
-*Nginx实线网关的负载均衡
+*(今天)网关完整流程图(过滤器&fallback回调)、Nginx实线网关的负载均衡
 *springSecurity安全框架
 apollo
 
 Redis原理、集群
+Es原理、集群
 分布式锁
-SpringCloud组件：消息总线
