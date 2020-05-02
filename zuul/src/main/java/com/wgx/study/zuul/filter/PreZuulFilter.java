@@ -16,7 +16,7 @@ import static org.springframework.cloud.netflix.zuul.filters.support.FilterConst
 /**
  * 自定义网关前置过滤器：校验请求参数是否合法，包含token参数
  */
-@Component
+//@Component
 public class PreZuulFilter extends ZuulFilter {
 
     private final Logger LOGGER = LoggerFactory.getLogger(PreZuulFilter.class);
