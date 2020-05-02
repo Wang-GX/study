@@ -1,14 +1,14 @@
 package com.wgx.study.project.Jwt;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 
 /**
  * JWT的载荷数据对象
  */
 @Data
-@AllArgsConstructor
+@Accessors(chain = true)
 public class UserInfo {
 
     private Long id;//用户id

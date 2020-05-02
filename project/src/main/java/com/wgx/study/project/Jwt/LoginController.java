@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Api(value = "登录",tags = "登录")
@@ -21,5 +22,10 @@ public class LoginController {
     @PostMapping("/login")
     public Response login(@RequestParam("username") String username, @RequestParam("password") String password, HttpServletResponse response) {
         return loginService.login(username, password, response);
+    }
+
+    @PostMapping("/select")
+    public Response select(HttpServletRequest request) {
+        return loginService.select(request);
     }
 }

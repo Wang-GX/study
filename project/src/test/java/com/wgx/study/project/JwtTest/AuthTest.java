@@ -36,7 +36,7 @@ public class AuthTest {
         //获取私钥
         PrivateKey privateKey = RsaUtils.getPrivateKey(privateFilePath);
         //生成token
-        String token = JwtUtils.generateTokenExpireInMinutes(new UserInfo(1L, "Jack", "guest"), privateKey, 5);
+        String token = JwtUtils.generateTokenExpireInMinutes(new UserInfo().setId(1L).setUsername("Jack").setRole("guest"), privateKey, 5);
         System.out.println("token = " + token);
 
         //获取公钥
