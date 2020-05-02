@@ -28,4 +28,9 @@ public class LoginController {
     public Response select(HttpServletRequest request, HttpServletResponse response) {
         return loginService.select(request, response);
     }
+
+    @PostMapping("/logout")
+    public Response logout(HttpServletRequest request, HttpServletResponse response) {
+        return loginService.logout(request, response);
+    }
 }
