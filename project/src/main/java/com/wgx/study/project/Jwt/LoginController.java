@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Api(value = "登录",tags = "登录")
+@Api(value = "登录", tags = "登录")
 @RestController
 @RequestMapping("/jwt")
 public class LoginController {
@@ -25,7 +25,7 @@ public class LoginController {
     }
 
     @PostMapping("/select")
-    public Response select(HttpServletRequest request) {
-        return loginService.select(request);
+    public Response select(HttpServletRequest request, HttpServletResponse response) {
+        return loginService.select(request, response);
     }
 }

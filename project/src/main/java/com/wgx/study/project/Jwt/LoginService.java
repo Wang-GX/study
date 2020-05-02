@@ -60,7 +60,7 @@ public class LoginService {
      * @param request
      * @return
      */
-    public Response select(HttpServletRequest request) {
+    public Response select(HttpServletRequest request, HttpServletResponse response) {
 
         String jwt = null;
         Cookie[] cookies = request.getCookies();
@@ -78,7 +78,24 @@ public class LoginService {
             log.info("info.getId() = " + info.getId());
             log.info("info.getExpiration() = " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(info.getExpiration()));
             log.info("info.getInfo() = " + info.getInfo());
-            return new Response().setCode(HttpStatus.OK.toString()).setMessage("获取用户信息成功").setData(new UserInfo().setId(info.getInfo().getId()).setUsername(info.getInfo().getUsername()).setRole(info.getInfo().getRole()));
+            //获取载荷中的载荷数据
+            Long id = info.getInfo().getId();
+            String username = info.getInfo().getUsername();
+            String userRole = info.getInfo().getRole();
+            //如果jwt即将过期则重新生成(jwt一旦生成就无法更改，因此我们无法修改token中的有效期，只能重新生成)
+            if (System.currentTimeMillis()+ 2 * 60 * 1000L < info.getExpiration().getTime()){
+                //重新生成JWT
+                jwt = JwtUtils.generateTokenExpireInMinutes(new UserInfo().setId(id).setUsername(username).setRole(userRole), jwtProperties.getPrivateKey(), jwtProperties.getExpire());
+                //将生成的JWT保存到Cookie中
+                Cookie cookie = new Cookie("token", jwt);
+                cookie.setMaxAge(jwtProperties.getExpire() * 60);//得到的是分钟,setMaxAge的单位是秒
+                cookie.setPath("/");//设置cookie的有效路径为根路径，这样访问该路径的子路径下就都会携带cookie了(cookie是与域名绑定的)
+                cookie.setHttpOnly(true);//JS不可操作，隐藏
+                //TODO 如果不设置域名默认是当前服务的地址
+                //cookie.setDomain(jwtProperties.getUser().getCookieDomain());
+                response.addCookie(cookie);
+            }
+            return new Response().setCode(HttpStatus.OK.toString()).setMessage("获取用户信息成功").setData(new UserInfo().setId(userId).setUsername(username).setRole(userRole));
         }
 
         throw new CommonException("401", "获取用户信息失败");
