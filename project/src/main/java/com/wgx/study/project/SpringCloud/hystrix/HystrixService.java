@@ -21,7 +21,7 @@ public class HystrixService {
     //@HystrixProperty注解了设置hystrix属性的方法。可以在HystrixPropertiesManager类中找到对应的name值
     @HystrixCommand(fallbackMethod = "fallback", commandProperties = {
             //设置该方法触发降级的超时时间为5s
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),//特定配置的优先级高于配置文件中的全局配置
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),//特定配置的优先级高于配置文件中的全局配置
     })
     public String testRequestTimeOutFallback() {
         try {
@@ -43,7 +43,7 @@ public class HystrixService {
     @HystrixCommand(fallbackMethod = "circuitBreakerFallBack", commandProperties = {
             @HystrixProperty(name = "circuitBreaker.enabled", value = "true"),//是否开启熔断机制
             @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),//触发熔断的最小请求次数
-            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000"),//熔断器从打开状态到半开状态的休眠时长
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "30000"),//熔断器从打开状态到半开状态的休眠时长(毫秒)
             @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "60"),//触发熔断的失败请求最小占比
     })
     public String testCircuitBreaker(Integer id) {
