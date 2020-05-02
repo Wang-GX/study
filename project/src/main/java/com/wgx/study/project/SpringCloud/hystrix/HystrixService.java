@@ -1,4 +1,4 @@
-package com.wgx.study.project.SpringCloud;
+package com.wgx.study.project.SpringCloud.hystrix;
 
 import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -69,6 +69,7 @@ public class HystrixService {
 
 
     public String testZuulRetry() {
+//        throw new RuntimeException();
         try {
             Thread.sleep(30000);
         } catch (Exception e) {

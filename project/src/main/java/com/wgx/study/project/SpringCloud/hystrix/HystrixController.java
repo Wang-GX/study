@@ -1,4 +1,4 @@
-package com.wgx.study.project.SpringCloud;
+package com.wgx.study.project.SpringCloud.hystrix;
 
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import io.swagger.annotations.Api;

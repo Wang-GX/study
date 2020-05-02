@@ -1,19 +1,29 @@
 https://www.cnblogs.com/okong/p/springcloud-ten.html
-Zuul的核心就是一系列过滤器网关对返回值过滤
+https://www.jianshu.com/p/ff863d532767
+过滤器是Zuul实现api网关功能最核心的部件，每一个进入zuul的http请求都会经过一系列的过滤器处理链得到请求响应并返回给客户端。
 Zuul中定义了四种标准过滤器类型，这些过滤器类型对应于请求的典型生命周期
-(1)PRE:可以在请求被路由之前调用。可以用于身份验证、服务鉴权、请求转发、增加请求参数等行为。
-(2)ROUTING:在路由请求时候被调用。这种过滤器用于构建发送给微服务的请求，并使用Apache HttpClient或Netfilx Ribbon请求微服务。
-(3)POST:在routing和error过滤器之后被调用。可以用于统计返回值和调用时间、记录日志、增加跨域头等行为。
-(4)ERROR:处理请求时发生错误时被调用。用于异常的统一处理和返回。
-   有两种实现方式：
+(1)外部http请求到达api网关服务的时候，首先它会进入第一个阶段pre，在这里它会被pre类型的过滤器进行处理。该类型过滤器的主要目的是在进行请求路由之前做一些前置加工，比如请求的校验等。
+(2)在完成了pre类型的过滤器处理之后，请求进入第二个阶段routing，也就是之前说的【路由请求转发阶段】，请求将会被routing类型的处理器处理。这里的具体处理内容就是将外部请求转发到具体服务实例上去的过程。
+   注意：这一阶段的核心过滤器是RibbonRoutingFilter，是routing阶段第一个执行的过滤器，它通过使用ribbon和hystrix来向服务实例发起请求，并将服务实例的请求结果返回。
+         核心代码：ClientHttpResponse response = forward(commandContext);//注意这个返回值的类型，在网关的fallback中也出现了
+(3)当服务实例请求结果都返回之后，routing阶段完成。请求进入第三个阶段post。此时请求将会被post类型的过滤器处理，这些过滤器在处理的时候不仅可以获取到请求信息，还能获取到服务实例的返回信息，所以在post类型的过滤器中，我们可以对处理结果进行一些加工或转换等内容。
+(4)另外，还有一个特殊的阶段error，【该阶段只有在上述三个阶段中发生异常的时候才会触发，但是它的最后流向还是post类型的过滤器，因为它需要通过post过滤器将最终结果返回给请求客户端】。
+   注意【】中的内容：
+   ①ERROR过滤器只有在其他三个阶段出现异常时才会执行，这个异常特指的是过滤器(执行链)中出现的异常，与被调用的服务中是否出现异常无关。
+     通过debug发现，无论被调用的服务中是否出现异常，RibbonRoutingFilter中的这行代码都会立即返回，过滤器(执行链)中没有出现异常，所以不会执行ERROR过滤器。
+     ClientHttpResponse response = forward(commandContext);也会立即
+   ②POST过滤器一定会执行，因为在POST过滤器中会完成返回给请求客户端的响应结果的封装。
+
+网关的请求超时(网关的Ribbon配置)与fallback回调：
+    网关向服务实例发起请求对应routing阶段，核心过滤器是RibbonRoutingFilter，核心代码是ClientHttpResponse response = forward(commandContext);
+    以下均为debug的结果：
+    (1)如果网关没有配置fallback回调，一旦网关请求超时(服务实例不可用或这接口执行时间过长)，上述方法就会抛出异常，执行ERROR过滤器 -> POST过滤器 -> 请求客户端
+    (2)如果网关配置了fallback回调，一旦网关请求超时，就会执行fallback回调，返回ClientHttpResponse作为上述方法的返回值。因为过滤器(执行链)中没有出现异常，所以执行POST过滤器 -> 请求客户端
+
+
+
+补充：
+   ERROR过滤器的两种实现方式：
      (1)继承SendErrorFilter(ZuulFilter的默认实现类)(建议)，重写run方法。如果不想继续传递到SendErrorFilter中，可以重写filterOrder方法，设置自定义过滤器的优先级SendErrorFilter(数值为0)，并且在run方法中调用RequestContext对象的remove("throwable")方法，移除throwable属性的值(SendErrorFilter是否执行的判断依据是throwable属性的值是否存在)，也可以在配置文件中直接禁用掉SendErrorFilter(不推荐)。
      (2)继承ZuulFilter，其余同上。
-     特别注意：一旦在Zuul网关过滤器传递过程中出现了异常，那么ERROR过滤器就会按照优先级依次执行(即使进行了try-catch也会执行)。所以如果不禁用掉SendErrorFilter过滤器并且也不希望它执行，那么必须在run方法中调用RequestContext对象的remove("throwable")方法，移除throwable属性的值。
-一个请求会先按顺序通过所有的前置过滤器，之后在路由过滤器中转发给后端应用，得到响应后又会通过所有的后置过滤器，最后响应给客户端。在整个流程中如果发生了异常则会跳转到错误过滤器中。
-需要特别注意的是(仔细观察doc目录下Zuul网关过滤器.jpg)，这里的异常指的是请求在Zuul网关的过滤器传递过程中出现的异常，包括网关自己抛出的异常(例如网关找不到可用服务)以及我们在过滤器中手动抛出的异常，而非被请求的服务中处理时的异常。
-
-注意：网关的ERROR过滤器和fallback回调没有本质上的联系。
-      ERROR过滤器是【请求在过滤器的传递过程中出现异常】时触发的。
-      fallback回调是【网关路由请求到其他服务过程中出现失败(例如找不到服务或者请求超时)】时触发的(请求必须已经从网关向服务地址发起路由)，如果网关开启了重试则会先进行重试。
-      例如：网关请求project服务，由于请求超时(Ribbon配置)触发网关的fallback回调，但是由于网关过滤器中没有出现异常，所以不会触发ERROR过滤器。
-      例如：PRE过滤器中出现异常，请求直接传递到ERROR过滤器中，此时请求不会再路由到project服务，所以也不会触发网关的fallback回调。
+     特别注意：如果pre、routing、post三个阶段中发生异常，那么ERROR过滤器就会按照优先级依次执行(Zuul的过滤器使用的是责任链模式，与run方法内部是否进行了try-catch处理无关)。所以如果不禁用掉SendErrorFilter过滤器并且也不希望它执行，那么必须在之前的ERROR过滤器的run方法中调用RequestContext对象的remove("throwable")方法，移除throwable属性的值。
