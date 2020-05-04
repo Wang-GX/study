@@ -3,7 +3,7 @@ Lcn分布式事务
 手动启动器，并完成SpringBoot自动配置的模拟效果
 
 51
-*(今天)网关完整流程图(过滤器&fallback回调)、Feign、Nginx实线网关的负载均衡
+分布式事务的理论基础
 *springSecurity安全框架
 apollo
 
