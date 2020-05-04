@@ -17,3 +17,8 @@ https://blog.csdn.net/weixin_43365369/article/details/94197758
         例如每次发送短信之后可以把这个id+业务场景唯一标识作为redis的key，放到缓存中，失效时间由业务场景决定(例如双十一活动结束时统一失效)。
         每次消息消费前先去redis中查是否存在这个key，如果存在就认为已经消费过了，如果不存在就认为还没有被消费过。
         弱校验的场景，就算消息丢了也无所谓(磁盘上也没有保留任何记录可以追溯)，无关痛痒。
+
+五种消息模型以及实现方式：
+https://blog.csdn.net/weixin_43365369/article/details/94197758
+如何避免消息丢失
+https://www.jianshu.com/p/8ed16edc73e4?from=timeline&isappinstalled=0
