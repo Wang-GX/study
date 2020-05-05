@@ -30,7 +30,6 @@ public class MQConfig {
     public static final String routingKey_RECEIVE_BACK = "RECEIVE_BACK";
 
 
-
     /**
      * 声明交换机(Direct模式)
      *
@@ -93,30 +92,31 @@ public class MQConfig {
         return BindingBuilder.bind(queueReceiveBack()).to(exchangeDirect()).with(routingKey_RECEIVE_BACK);
     }
 
-    /*
 
-     */
-/**
- * 声明交换机(Fanout模式)
- * @return
- *//*
+//    /**
+//     * 声明交换机(Fanout模式)
+//     * @return
+//     */
+//    @Bean
+//    public FanoutExchange exchangeFanout() {
+//        return new FanoutExchange("exchangeFanout", true, false);
+//    }
+//
+//    @Bean
+//    public Queue queueFanout() {
+//        return new Queue("queueFanout", true, false, false);
+//    }
+//
+//
+//    /**
+//     * 队列绑定交换机(Fanout模式的绑定：不需要routingKey)
+//     *
+//     * @return
+//     */
+//    @Bean
+//    public Binding bindingFanout() {
+//        return BindingBuilder.bind(queueFanout()).to(exchangeFanout());
+//    }
 
-    @Bean
-    public FanoutExchange exchangeFanout() {
-        return new FanoutExchange((EXCHANGE,true,false);
-    }
 
-
-    */
-/**
- * 队列绑定交换机(Fanout模式的绑定：不需要routingKey)
- * @return
- *//*
-
-    @Bean
-    public Binding bindingReceive() {
-        return BindingBuilder.bind(queueReceive()).to(exchangeFanout());
-    }
-
-*/
 }

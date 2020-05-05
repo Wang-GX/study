@@ -67,7 +67,7 @@ public class MessageHandler {
             e.printStackTrace();
 
             //消费者否认消息：该方法只能否认当前索引表示的一条消息
-            //requeue(参数2)：被拒绝的消息是否重新投递到队列。false表示不将被否认消息重新放回队列，直接丢弃。true表示将被否认的消息重新放回队列，重新消费。
+            //requeue(参数2)：被拒绝的消息是否重新投递到队列(注意：是将消息重新放回队列，而不是重新发送消息。这两者是有本质区别的，如果重新发送消息可能不止发送到一个队列。)。false表示不将被否认消息重新放回队列，直接丢弃。true表示将被否认的消息重新放回队列，重新消费。
             //channel.basicReject(deliveryTag, false);
 
             //消费者否认消息：该方法可以批量否认
@@ -89,11 +89,5 @@ public class MessageHandler {
             channel.basicNack(deliveryTag, true, false);
         }
     }
+
 }
-
-
-/**
- * 从messageProperties获取消息唯一id，到redis中查询该id是否存在，以此来判断是否要消费这条消息
- * 如果该id存在，说明这条消息还没有被消费过，消费这条消息
- * 如果该id不存在，说明这条消息已经被消费过，不消费这条消息
- */
