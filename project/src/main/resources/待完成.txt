@@ -3,9 +3,12 @@ Lcn分布式事务
 手动启动器，并完成SpringBoot自动配置的模拟效果
 
 51
-分布式事务的理论基础
-*springSecurity安全框架
-apollo
+*分布式事务的理论基础以及实现
+*apollo
+*SpringCloudConfig
+springSecurity安全框架
+
+TODO 将eureka调用project的代码抽取出来单独作为网关和project服务之间的中间层服务
 
 Redis原理、集群
 Es原理、集群
