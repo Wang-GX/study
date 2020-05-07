@@ -10,8 +10,8 @@
 
 模式：
 (1) BEAN模式：任务逻辑以JobHandler的形式存在于执行器所在项目中。
-    参考：DemoJobHandler类，【编写IJobHandler实现】
-    新建任务，指定运行模式为BEAN，配置corn表达式，指定JobHandler(名称要与项目中的执行器类上的注解@JobHandler(value="demoJobHandler")中的value值保持一致)。
+    参考：MyJobHandler类，【编写IJobHandler实现】
+    新建任务，指定运行模式为BEAN，配置corn表达式，指定JobHandler(名称要与项目中的执行器类上的注解@JobHandler(value="MyJobHandler")中的value值保持一致)。
 
 (2) GLUE(Java)模式：任务以源码方式维护在调度中心项目中，支持通过Web IDE在线更新，实时编译和生效，因此不需要指定JobHandler。
     新建任务，指定运行模式为GLUE(Java)，配置corn表达式。
