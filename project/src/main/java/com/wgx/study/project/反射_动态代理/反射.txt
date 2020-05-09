@@ -1,0 +1,36 @@
+1、反射的基本概念
+在正常情况下，如果要使用一个类，则必须按照如下的步骤操作：
+    (1)使用import导入类所在的包
+    (2)明确地使用类名称或者接口名称定义对象(java.lang.Class)
+    (3)通过关键字new进行类对象实例化(java.lang.reflect.Constructor)
+    (4)通过"对象.属性"进行类中属性的调用(java.lang.reflect.Field)
+    (5)通过"对象.方法"进行类中方法的调用(java.lang.reflect.Method)
+而通过反射，即使完全不知道类内部的结构，即使不导入包.类，也可以进行类对象的实例化操作。
+
+2、Class类：
+如果想要使用Class类进行操作，那么就必须创建Class类的实例化对象，包括以下三种方式：
+    (1)对象.getClass();
+    (2)类名/接口名.class;
+    (3)*Class.forName("类名或接口全限定名");
+
+
+3、操作类中构造方法：
+    (1)取得类中全部构造方法
+       Class对象.getConstructors();
+    (2)取得类中指定构造方法
+       Class对象.getConstructors(Class<?>... parameterTypes);
+
+4、实例化类对象
+    (1)通过Class对象实例化对象(必须存在无参构造方法)
+       Class对象.newInstance();//等效于：无参Constructor对象.newInstance();
+    (2)通过Constructor对象实例化对象
+       Constructor对象.newInstance(Object ... args);
+
+5、操作类中方法(需要考虑继承性)：
+    (1)取得类中全部方法(包括从父类中继承的方法):
+       Class对象.getMethods();
+    (2)取得类中指定方法(包括从父类中继承的方法):
+       Class对象.getMethod(String methodName, Class<?>... parameterTypes);
+    (3)*反射调用方法
+       Method对象.invoke(Object obj, Object... args);//参数1：实例化对象(注意这里的参数类型是Object) 参数2：方法参数
+
