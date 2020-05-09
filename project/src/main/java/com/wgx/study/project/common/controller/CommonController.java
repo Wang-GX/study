@@ -1,5 +1,6 @@
 package com.wgx.study.project.common.controller;
 
+import com.wgx.study.project.SpringAOP_SpringMVC拦截器_自定义注解.LogAspect;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/common")
 public class CommonController {
 
+    @LogAspect.MyAnnotation(name = "张三",score = {80})
     @ApiOperation(value = "SpringAOP测试")
     @PostMapping("/springAop")
     public void springAopTest() {

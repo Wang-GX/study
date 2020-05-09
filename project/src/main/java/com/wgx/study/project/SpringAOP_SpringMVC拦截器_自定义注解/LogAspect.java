@@ -1,4 +1,4 @@
-package com.wgx.study.project.SpringAOP_SpringMVC拦截器;
+package com.wgx.study.project.SpringAOP_SpringMVC拦截器_自定义注解;
 
 
 import com.alibaba.fastjson.JSONObject;
@@ -9,6 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.lang.annotation.*;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * AOP：可以切入任意方法(连接点)
@@ -44,14 +48,25 @@ public class LogAspect {
     private static Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
     //声明切入点(以方法为最小颗粒度)
-    @Pointcut("execution(* com.example.demo.common.controller..*.*(..))")
+    @Pointcut("execution(* com.wgx.study.project.common.controller..*.*(..))")
     public void pointcut() {
     }
 
     //声明通知类型和通知逻辑以及作用范围(通知和切入点的结合称为切面）
     //TODO 环绕通知与其他通知最好不要同时使用！执行顺序可能存在问题。优先使用其他通知。
     @Around("pointcut()")
-    public Object around(ProceedingJoinPoint joinPoint) {
+    public Object around(ProceedingJoinPoint joinPoint) throws NoSuchMethodException {
+        //获取请求调用的类名
+        Class<?> className = joinPoint.getTarget().getClass();
+        //获取Method对象
+        Method method = className.getMethod(joinPoint.getSignature().getName());
+        //判断方法上是否存在指定注解
+        MyAnnotation myAnnotation = method.getAnnotation(MyAnnotation.class);
+        if (myAnnotation != null) {
+            //获取注解属性的值
+            System.out.println("存在myAnnotation注解");
+            System.out.println("name：" + myAnnotation.name() + "，age：" + myAnnotation.age() + "，score：" + Arrays.toString(myAnnotation.score()));
+        }
         //获取方法名
         methodNameLocalThread.set(joinPoint.getSignature().getName());
         logger.info("around：" + methodNameLocalThread.get() + "方法开始执行，入参：" + JSONObject.toJSONString(joinPoint.getArgs(), SerializerFeature.WriteMapNullValue));
@@ -77,18 +92,27 @@ public class LogAspect {
         logger.info("after");
     }
 
-    @AfterReturning(pointcut = "pointcut()",returning = "response")
+    @AfterReturning(pointcut = "pointcut()", returning = "response")
     //返回通知：在切入点方法返回之后执行(可以理解为是回调)
     public void afterReturning(Object response) {
         logger.info("afterReturning" + response);
         methodNameLocalThread.remove();
     }
 
-    @AfterThrowing(pointcut = "pointcut()",throwing = "ex")
+    @AfterThrowing(pointcut = "pointcut()", throwing = "ex")
     //异常通知：在切入点方法抛出异常时执行
     public void afterThrowing(Throwable ex) {
         logger.info("afterThrowing" + ex);
         methodNameLocalThread.remove();
+    }
+
+    @Documented
+    @Target(value = ElementType.METHOD)//注解的使用范围
+    @Retention(value = RetentionPolicy.RUNTIME)//注解的生命周期
+    public @interface MyAnnotation {
+        String name();
+        int age() default 18;
+        int[] score();
     }
 
 }

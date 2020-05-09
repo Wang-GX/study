@@ -1,4 +1,4 @@
-package com.wgx.study.project.SpringAOP_SpringMVC拦截器;
+package com.wgx.study.project.SpringAOP_SpringMVC拦截器_自定义注解;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
