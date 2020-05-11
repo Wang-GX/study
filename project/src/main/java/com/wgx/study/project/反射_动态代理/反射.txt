@@ -13,7 +13,6 @@
     (2)类名/接口名.class;
     (3)*Class.forName("类名或接口全限定名");
 
-
 3、操作类中构造方法：
     (1)取得类中全部构造方法
        Class对象.getConstructors();
@@ -32,5 +31,7 @@
     (2)取得类中指定方法(包括从父类中继承的方法):
        Class对象.getMethod(String methodName, Class<?>... parameterTypes);
     (3)*反射调用方法
-       Method对象.invoke(Object obj, Object... args);//参数1：实例化对象(注意这里的参数类型是Object) 参数2：方法参数
+       Method对象.invoke(Object obj, Object... args);//参数1：实例化对象(注意这里的参数类型是Object，通过反射调用方法不需要知道对象的具体类型) 参数2：方法参数
+
+6、操作类中属性：通常不会直接操作类中属性，而是通过set/get方法，略
 

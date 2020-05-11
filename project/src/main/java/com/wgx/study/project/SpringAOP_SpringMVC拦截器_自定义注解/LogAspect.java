@@ -56,7 +56,7 @@ public class LogAspect {
     //TODO 环绕通知与其他通知最好不要同时使用！执行顺序可能存在问题。优先使用其他通知。
     @Around("pointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws NoSuchMethodException {
-        //获取请求调用的类名
+        //获取请求调用的类的Class对象
         Class<?> className = joinPoint.getTarget().getClass();
         //获取Method对象
         Method method = className.getMethod(joinPoint.getSignature().getName());
@@ -107,8 +107,10 @@ public class LogAspect {
     }
 
     @Documented
-    @Target(value = ElementType.METHOD)//注解的使用范围
-    @Retention(value = RetentionPolicy.RUNTIME)//注解的生命周期
+    //定义注解的使用范围：TYPE：类&接口、FIELD：成员变量、METHOD：方法、PARAMETER：参数、CONSTRUCTOR：构造方法
+    @Target(value = ElementType.METHOD)
+    //定义注解的生命周期：SOURCE：源代码、CLASS(默认)：源代码&编译后的字节码文件、RUNTIME(通常)：源代码&编译后的字节码文件&运行时内存(程序可以通过反射获取该注解)
+    @Retention(value = RetentionPolicy.RUNTIME)
     public @interface MyAnnotation {
         String name();
         int age() default 18;

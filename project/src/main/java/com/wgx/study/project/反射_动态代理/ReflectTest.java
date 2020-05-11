@@ -9,14 +9,18 @@ public class ReflectTest {
     public static void main(String[] args) throws Exception {
         //获取Class实例化对象，Class类的泛型无意义，使用？即可
         Class<?> studentClass = Class.forName("com.wgx.study.project.反射_动态代理.Student");
+        Class<?> codingClass = Class.forName("com.wgx.study.project.反射_动态代理.Coding");
+        System.out.println(codingClass);
         Object obj = studentClass.newInstance();
+        Object o = codingClass.newInstance();
+        System.out.println(o);
         Method study = studentClass.getMethod("study");
         study.invoke(obj);
 
     }
 }
 
-class Student extends Parent {
+class Student extends Parent implements Coding{
 
     private String name;
     private Integer age;
@@ -40,6 +44,11 @@ class Student extends Parent {
                 ", age=" + age +
                 '}';
     }
+
+    @Override
+    public void coding() {
+        System.out.println("java is the best language");
+    }
 }
 
 class Parent {
@@ -47,4 +56,12 @@ class Parent {
     public void work() {
         System.out.println("good good work");
     }
+}
+
+/**
+ * 敲代码接口
+ */
+interface Coding{
+
+    void coding();
 }
