@@ -11,7 +11,12 @@ public class JdkDynamicProxy implements InvocationHandler {
 
     private Object target = null;
 
-    //建立代理对象和真实对象的代理关系，并返回代理对象
+    /**
+     * 建立代理对象和真实对象的代理关系，并返回代理对象
+     *
+     * @param target 真实对象
+     * @return 代理对象
+     */
     public Object bind(Object target){
         this.target = target;
         Class<?> targetClass = target.getClass();
@@ -26,7 +31,7 @@ public class JdkDynamicProxy implements InvocationHandler {
      *
      * @param proxy 代理对象
      * @param method 调用的方法
-     * @param args 参数列表
+     * @param args 方法的参数列表
      * @return
      * @throws Throwable
      */

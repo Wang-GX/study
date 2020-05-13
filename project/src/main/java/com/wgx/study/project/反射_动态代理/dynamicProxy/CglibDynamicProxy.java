@@ -11,7 +11,12 @@ import java.lang.reflect.Method;
  */
 public class CglibDynamicProxy implements MethodInterceptor {
 
-    //建立代理对象和真实对象的代理关系，并返回代理对象
+    /**
+     * 建立代理对象和真实对象的代理关系，并返回代理对象
+     *
+     * @param targetClass 真实对象的Class对象
+     * @return 代理对象
+     */
     public Object bind(Class targetClass) {
         //cglib的字节码增强器
         Enhancer enhancer = new Enhancer();
@@ -30,7 +35,7 @@ public class CglibDynamicProxy implements MethodInterceptor {
      *
      * @param proxy 代理对象
      * @param method 调用的方法
-     * @param args 参数列表
+     * @param args 方法的参数列表
      * @param methodProxy
      * @return
      * @throws Throwable
