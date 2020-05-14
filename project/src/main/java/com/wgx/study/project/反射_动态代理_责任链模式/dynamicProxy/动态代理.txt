@@ -13,16 +13,30 @@ https://cloud.tencent.com/developer/article/1461796
 
 
 Mybatis动态代理的实现原理：
-                  XMLConfigBuilder：解析mybatis配置文件、解析XxxMapper.xml中的标签 -> MappedStatement(封装用于执行的SQL语句、参数、返回值)
-                        ↓Map<String,MapperStatement>：key:XxxMapper的全路径(namespace) + 标签元素id
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis-config.xml"));
+                         ↓
+                  XMLConfigBuilder：读取配置文件，解析mybatis-config.xml配置文件中的配置标签
+                  XMLMapperBuilder：读取映射文件，解析XxxMapper.xml(映射文件)中的SQL标签<insert>&<update>&<delete>&<select> -> MappedStatement(封装用于执行的SQL语句、参数、返回值)
+                                    核心方法：parse();内部调用核心方法：
+                                              (1)configurationElement(XNode context);//将映射文件中的SQL标签解析成MappedStatement对象并保存到Configuration类中的mappedStatements属性中(mappedStatements：Map<String,MapperStatement>：key:XxxMapper的全路径(namespace) + 标签元素id)
+                                              (2)bindMapperForNamespace();//通过反射获取namespace属性值(Mapper接口全路径)对应的Class对象，并调用MapperRegistry对象的addMapper方法
+                                                 MapperRegistry类中维护着两个属性：config(Configuration)和knownMappers(Map<Class<?>, MapperProxyFactory<?>>)
+                                                 addMapper(Class<T> type);//为Class对象绑定一个Mapper代理对象工厂MapperProxyFactory，并添加到knownMappers属性中
+                                                 getMapper(Class<T> type, SqlSession sqlSession);//根据Class对象的类型从knownMappers中获取指定的代理对象工厂，通过代理对象工厂生成MapperProxy对象(实现了InvocationHandler接口，代理方法逻辑)，
+                                                                                                 //然后再通过Proxy.newProxyInstance(ClassLoader loader,Class<?>[] interfaces,InvocationHandler h);生成代理对象并返回(JDK动态代理)。
+                        ↓
                   Configuration
                         ↓
                  SqlSessionFactory
-                        ↓
+                        ↓ SqlSession sqlSession = sqlSessionFactory.openSession();
                     SqlSession
-                        ↓getMapper(Mapper接口.class) -> MapperProxyFactory -> MapperProxy(实现了InvocationHandler接口，说明是实现动态代理的配置类) -> 返回Mapper接口的代理对象
+                        ↓ sqlSession.getMapper(Mapper接口.class) -> 调用MapperRegistry对象的getMapper方法，获取Mapper接口的代理对象(原理见上)
+               XxxMapper接口代理对象
+                        ↓
+Mapper接口的代理对象调用方法 -> 调用MapperProxy类的invoke方法 -> MapperMethod：execute(SqlSession sqlSession, Object[] args); -> SqlSession对象调用insert/update/delete/select方法 -> 通过key从Configuration中获取指定的MapperStatement对象 -> 传递参数，发送SQL语句到数据库，处理返回的行数或结果集
 
-Mapper接口的代理对象调用方法 -> MapperProxy类的invoke方法 -> MapperMethod类的execute方法(SqlSession sqlSession, Object[] args) -> SqlSession对象调用insert/update/delete/select方法 -> 通过key从Configuration中获取指定的MapperStatement对象 -> 传递参数，发送SQL语句到数据库，封装返回值
+
+*在使用SpringBoot时，Mybatis会在服务启动时通过启动类上的@MapperScan注解扫描指定包下的所有XxxMapper接口，以及扫描配置文件中指定路径下的所有的XxxMapper.xml文件并自动完成上述操作
 
 
 
