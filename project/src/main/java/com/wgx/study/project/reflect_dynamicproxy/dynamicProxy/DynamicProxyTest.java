@@ -1,4 +1,4 @@
-package com.wgx.study.project.反射_动态代理.dynamicProxy;
+package com.wgx.study.project.reflect_dynamicproxy.dynamicProxy;
 
 public class DynamicProxyTest {
 

@@ -1,4 +1,6 @@
-package com.wgx.study.project.反射_动态代理.dynamicProxy;
+package com.wgx.study.project.reflect_dynamicproxy.dynamicProxy;
+
+import lombok.Data;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -21,7 +23,9 @@ public class JdkDynamicProxy implements InvocationHandler {
         this.target = target;
         Class<?> targetClass = target.getClass();
         //arg1：真实对象的类加载器、arg2：真实对象实现的接口列表、arg3：InvocationHandler接口的实现类，定义用于执行的代理逻辑
-        Object proxy = Proxy.newProxyInstance(targetClass.getClassLoader(), targetClass.getInterfaces(), this);
+        ClassLoader classLoader = targetClass.getClassLoader();
+        Class<?>[] interfaces = targetClass.getInterfaces();
+        Object proxy = Proxy.newProxyInstance(classLoader, interfaces, this);
         return proxy;
     }
 
@@ -46,7 +50,7 @@ public class JdkDynamicProxy implements InvocationHandler {
     }
 }
 
-
+@Data
 class JdkDynamicProxyTarget implements JdkDynamicProxyInterface{
     @Override
     public String sayHello() {
