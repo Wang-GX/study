@@ -10,3 +10,21 @@ https://cloud.tencent.com/developer/article/1461796
 责任链模式
 1、概念及作用：
    当一个对象在一条链上被多个拦截器拦截处理(拦截器也可以选择不拦截处理它)时，我们把这样的设计模式成为责任链模式。(例如SpringCloud中的zuul网关过滤器)
+
+
+Mybatis动态代理的实现原理：
+                  XMLConfigBuilder：解析mybatis配置文件、解析XxxMapper.xml中的标签 -> MappedStatement(封装用于执行的SQL语句、参数、返回值)
+                        ↓Map<String,MapperStatement>：key:XxxMapper的全路径(namespace) + 标签元素id
+                  Configuration
+                        ↓
+                 SqlSessionFactory
+                        ↓
+                    SqlSession
+                        ↓getMapper(Mapper接口.class) -> MapperProxyFactory -> MapperProxy(实现了InvocationHandler接口，说明是实现动态代理的配置类) -> 返回Mapper接口的代理对象
+
+Mapper接口的代理对象调用方法 -> MapperProxy类的invoke方法 -> MapperMethod类的execute方法(SqlSession sqlSession, Object[] args) -> SqlSession对象调用insert/update/delete/select方法 -> 通过key从Configuration中获取指定的MapperStatement对象 -> 传递参数，发送SQL语句到数据库，封装返回值
+
+
+
+
+
