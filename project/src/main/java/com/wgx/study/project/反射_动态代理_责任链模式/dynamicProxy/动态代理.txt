@@ -10,4 +10,3 @@ https://cloud.tencent.com/developer/article/1461796
 责任链模式
 1、概念及作用：
    当一个对象在一条链上被多个拦截器拦截处理(拦截器也可以选择不拦截处理它)时，我们把这样的设计模式成为责任链模式。(例如SpringCloud中的zuul网关过滤器)
-   层层代理的方式处理真实对象：proxy3->代理->proxy2->代理->proxy1->代理->target

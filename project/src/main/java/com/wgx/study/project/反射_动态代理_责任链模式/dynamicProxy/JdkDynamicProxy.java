@@ -1,4 +1,4 @@
-package com.wgx.study.project.reflect_dynamicproxy.dynamicProxy;
+package com.wgx.study.project.反射_动态代理_责任链模式.dynamicProxy;
 
 import lombok.Data;
 
@@ -62,4 +62,16 @@ class JdkDynamicProxyTarget implements JdkDynamicProxyInterface{
 
 interface JdkDynamicProxyInterface{
     String sayHello();
+}
+
+class JdkDynamicProxyTest{
+    public static void main(String[] args) {
+        //1、测试Jdk实现动态代理
+        JdkDynamicProxy jdkDynamicProxy = new JdkDynamicProxy();
+        //使用真实对象实现的接口声明代理对象的类型
+        JdkDynamicProxyInterface proxy1 = (JdkDynamicProxyInterface)jdkDynamicProxy.bind(new JdkDynamicProxyTarget());
+        //代理对象调用方法
+        String str1 = proxy1.sayHello();
+        System.out.println(str1);
+    }
 }

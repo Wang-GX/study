@@ -1,4 +1,4 @@
-package com.wgx.study.project.reflect_dynamicproxy.dynamicProxy;
+package com.wgx.study.project.反射_动态代理_责任链模式.dynamicProxy;
 
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
@@ -57,6 +57,17 @@ class CglibDynamicProxyTarget {
         String str = "Hello Java";
         System.out.println(str);
         return str;
+    }
+}
+
+class CglibDynamicProxyTest{
+    public static void main(String[] args) {
+        //1、测试cglib实现动态代理
+        CglibDynamicProxy cglibDynamicProxy = new CglibDynamicProxy();
+        CglibDynamicProxyTarget proxy2 = (CglibDynamicProxyTarget)cglibDynamicProxy.bind(CglibDynamicProxyTarget.class);
+        //代理对象调用方法
+        String str2 = proxy2.sayHello();
+        System.out.println(str2);
     }
 }
 
