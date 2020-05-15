@@ -28,8 +28,14 @@ public class ReduceStockController {
     @Autowired
     private Redisson redisson;
 
-    @GetMapping("/reduceStock")
-    public String reduceStock() {
+    /**
+     * 自旋锁
+     * 无法防止重复调用，但是会保证数据的最终一致性，线程自旋等待锁释放
+     *
+     * @return
+     */
+    @GetMapping("/reduceStockWait")
+    public String reduceStockWait() {
 
         String lockKey = "lockKey";//TODO 这个是redis锁对应的key，如果需要使用不同的锁，则锁key也要随之改变(如SAAS系统的多租户场景)
 //        String clientId = UUID.randomUUID().toString();
@@ -68,6 +74,46 @@ public class ReduceStockController {
 //            }
         }
 
+        return "end";
+    }
+
+
+    /**
+     * 非阻塞锁
+     * 防止重复调用，线程获取锁失败不会阻塞
+     *
+     * @return
+     */
+    @GetMapping("/reduceStockImmediately")
+    public String reduceStock() {
+
+        String lockKey = "lockKey";
+        RLock lock = redisson.getLock(lockKey);
+        boolean b = false;
+        try {
+            //waitTime：尝试获取锁的最大时长，如果设置为负数则获取锁失败时立即返回false
+            //leaseTime：锁的超时时长(key的自动过期时间)
+            b = lock.tryLock(-1, 3, TimeUnit.SECONDS);//如果加锁成功返回true，如果加锁失败返回false并向下执行不会阻塞
+            if (b) {
+                //加锁成功
+                int stock = Integer.parseInt(redisTemplate.opsForValue().get("stock"));
+                if (stock > 0) {
+                    int realStock = stock - 1;
+                    redisTemplate.opsForValue().set("stock", realStock + "");
+                    System.out.println("扣减成功，剩余库存：" + realStock);
+                } else {
+                    System.out.println("扣减失败，库存不足");
+                }
+            } else {
+                System.out.println("当前线程获取锁失败");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            if (b) {
+                lock.unlock();//注意这里要进行判断，如果没有获取锁的线程调用unlock方法会抛出InterruptedException(通过key获取的value与当前线程的唯一标识不符)
+            }
+        }
         return "end";
     }
 }
