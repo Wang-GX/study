@@ -1,4 +1,4 @@
-package com.wgx.study.project.SpringBoot自动配置;
+package com.wgx.study.faced.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import io.seata.rm.datasource.DataSourceProxy;
@@ -52,4 +52,5 @@ public class HikaricpPoolConfiguration {
         sqlSessionFactoryBean.setTransactionFactory(new SpringManagedTransactionFactory());
         return sqlSessionFactoryBean.getObject();
     }
+
 }

@@ -4,7 +4,8 @@
 
     <!--<cache/>-->
 
-    <select id="getUser" resultType="User">
+    <!--<select id="getUser" resultType="User">--><!--Seata代理数据源时无法识别类型别名-->
+    <select id="getUser" resultType="com.wgx.study.project.common.pojo.User">
         select * from user where user.id = 1;
     </select>
 
