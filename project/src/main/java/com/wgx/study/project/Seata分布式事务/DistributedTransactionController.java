@@ -16,17 +16,6 @@ public class DistributedTransactionController {
     private DistributedTransactionService distributedTransactionService;
 
     /**
-     * 模拟生成订单
-     *
-     * @return
-     */
-    @PostMapping("/order")
-    String orderTestDistributedTransaction(@RequestParam String id){
-        distributedTransactionService.orderTestDistributedTransaction(id);
-        return null;
-    };
-
-    /**
      * 模拟扣减库存
      *
      * @return
@@ -34,6 +23,17 @@ public class DistributedTransactionController {
     @PostMapping("/stock")
     String stockTestDistributedTransaction(@RequestParam String id){
         distributedTransactionService.stockTestDistributedTransaction(id);
+        return null;
+    };
+
+    /**
+     * 模拟生成订单
+     *
+     * @return
+     */
+    @PostMapping("/order")
+    String orderTestDistributedTransaction(@RequestParam String id){
+        distributedTransactionService.orderTestDistributedTransaction(id);
         return null;
     };
 }

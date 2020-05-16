@@ -29,5 +29,6 @@ public class DistributedTransactionService {
         User user = new User();
         user.setUserName("生成订单:" + id);
         userMapper.insertUser(user);
+        System.out.println(1/0);
     }
 }

@@ -31,7 +31,7 @@ public class DistributedTransactionController {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         distributedTransactionFeignClient.stockTestDistributedTransaction(uuid);
         distributedTransactionFeignClient.orderTestDistributedTransaction(uuid);
-        System.out.println(1/0);
+
     }
 
 }
