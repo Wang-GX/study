@@ -1,5 +1,7 @@
 package com.wgx.study.project.Spring相关;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 public class SpringCycleDependenceTest {
@@ -28,33 +30,43 @@ public class SpringCycleDependenceTest {
 
 @Component
 class A{
+
     private B b;
-//    public A(B b) {
-//      this.b = b;
-//    }
-    public void setB(B b) {
-        this.b = b;
+
+    @Lazy
+    @Autowired
+    public A(B b) {
+      this.b = b;
     }
+//    public void setB(B b) {
+//        this.b = b;
+//    }
 }
 
 @Component
 class B{
+
     private C c;
-//    public B(C c) {
-//        this.c = c;
-//    }
-    public void setC(C c) {
+
+    @Autowired
+    public B(C c) {
         this.c = c;
     }
+//    public void setC(C c) {
+//        this.c = c;
+//    }
 }
 
 @Component
 class C{
+
     private A a;
-//    public C(A a) {
-//        this.a = a;
-//    }
-    public void setA(A a) {
+
+    @Autowired
+    public C(A a) {
         this.a = a;
     }
+//    public void setA(A a) {
+//        this.a = a;
+//    }
 }
