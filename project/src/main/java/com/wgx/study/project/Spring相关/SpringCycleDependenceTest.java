@@ -19,6 +19,10 @@ public class SpringCycleDependenceTest {
      * Spring是先将Bean对象实例化之后再设置对象属性的。
      * Spring先是用构造实例化Bean对象，此时Spring会将这个实例化结束的对象放到一个Map中，并且Spring提供了获取这个未设置属性的实例化对象引用的方法。
      * 当Spring实例化了A、B、C后，紧接着会去设置对象的属性，此时A依赖B，就会去Map中取出存在里面的单例B对象，以此类推，不会出来循环的问题、
+     *
+     * 可以在注入产生循环依赖问题的Bean上添加@Lazy注解，表示延迟加载，即在调用某个 bean 的时候再去初始化
+     * 循环依赖：A->B->C-A
+     * 在B上添加@Lazy注解，那么IOC容器启动时只会初始化A，调用B时初始化B->初始化C->已经初始化的A，不会产生循环依赖问题
      */
 }
 
