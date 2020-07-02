@@ -17,7 +17,7 @@
 
     <!--可以使用${标签名}来使用在<properties>标签里所定义的<标签>值</标签>，可以作为全局变量来用,改变该全局变量的值,所有引用该全局变量的值也随着改变,方便维护-->
     <properties>
-        <mysql.version>5.1.32</mysql.version>
+        <mysql.version>8.0.16</mysql.version>
         <mybatis.version>1.3.2</mybatis.version>
     </properties>
 
